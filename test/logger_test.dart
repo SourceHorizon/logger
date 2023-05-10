@@ -186,10 +186,10 @@ void main() {
     expect(printedMessage, 'This is');
   });
 
-  test('Logger.close', () {
+  test('Logger.close', () async {
     var logger = Logger();
     expect(logger.isClosed(), false);
-    logger.close();
+    await logger.close();
     expect(logger.isClosed(), true);
   });
 }

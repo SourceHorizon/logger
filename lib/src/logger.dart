@@ -156,11 +156,11 @@ class Logger {
   }
 
   /// Closes the logger and releases all resources.
-  void close() {
+  Future<void> close() async {
     _active = false;
-    _filter.destroy();
-    _printer.destroy();
-    _output.destroy();
+    await _filter.destroy();
+    await _printer.destroy();
+    await _output.destroy();
   }
 
   /// Register a [LogCallback] which is called for each new [LogEvent].

@@ -24,10 +24,8 @@ class MultiOutput extends LogOutput {
   }
 
   @override
-  void init() {
-    for (var o in _outputs) {
-      o.init();
-    }
+  Future<void> init() async {
+    await Future.wait(_outputs.map((e) => e.init()));
   }
 
   @override
@@ -38,9 +36,7 @@ class MultiOutput extends LogOutput {
   }
 
   @override
-  void destroy() {
-    for (var o in _outputs) {
-      o.destroy();
-    }
+  Future<void> destroy() async {
+    await Future.wait(_outputs.map((e) => e.destroy()));
   }
 }

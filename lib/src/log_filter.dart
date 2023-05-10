@@ -7,7 +7,7 @@ import 'package:logger/src/logger.dart';
 abstract class LogFilter {
   Level? level;
 
-  void init() {}
+  Future<void> init() async {}
 
   /// Is called every time a new log message is sent and decides if
   /// it will be printed or canceled.
@@ -15,5 +15,5 @@ abstract class LogFilter {
   /// Returns `true` if the message should be logged.
   bool shouldLog(LogEvent event);
 
-  void destroy() {}
+  Future<void> destroy() async {}
 }

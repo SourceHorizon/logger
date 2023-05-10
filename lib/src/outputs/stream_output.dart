@@ -28,7 +28,7 @@ class StreamOutput extends LogOutput {
   }
 
   @override
-  void destroy() {
-    _controller.close();
+  Future<void> destroy() {
+    return _controller.close();
   }
 }
