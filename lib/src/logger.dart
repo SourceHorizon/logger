@@ -127,11 +127,13 @@ class Logger {
     } else if (level == Level.nothing) {
       throw ArgumentError('Log events cannot have Level.nothing');
     }
+
     var logEvent = LogEvent(level, message, error, stackTrace);
+    for (var callback in _logCallbacks) {
+      callback(logEvent);
+    }
+
     if (_filter.shouldLog(logEvent)) {
-      for (var callback in _logCallbacks) {
-        callback(logEvent);
-      }
       var output = _printer.log(logEvent);
 
       if (output.isNotEmpty) {
