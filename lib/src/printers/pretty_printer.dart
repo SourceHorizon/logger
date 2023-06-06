@@ -347,18 +347,6 @@ class PrettyPrinter extends LogPrinter {
     }
   }
 
-  AnsiColor _getErrorColor(Level level) {
-    if (colors) {
-      if (level == Level.wtf) {
-        return levelColors[Level.wtf]!.toBg();
-      } else {
-        return levelColors[Level.error]!.toBg();
-      }
-    } else {
-      return AnsiColor.none();
-    }
-  }
-
   String _getEmoji(Level level) {
     if (printEmojis) {
       return levelEmojis[level]!;
@@ -380,14 +368,8 @@ class PrettyPrinter extends LogPrinter {
     if (includeBox[level]!) buffer.add(color(_topBorder));
 
     if (error != null) {
-      var errorColor = _getErrorColor(level);
       for (var line in error.split('\n')) {
-        buffer.add(
-          color(verticalLineAtLevel) +
-              errorColor.resetForeground +
-              errorColor(line) +
-              errorColor.resetBackground,
-        );
+        buffer.add(color('$verticalLineAtLevel$line'));
       }
       if (includeBox[level]!) buffer.add(color(_middleBorder));
     }
