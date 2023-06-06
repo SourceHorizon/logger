@@ -74,25 +74,33 @@ class PrettyPrinter extends LogPrinter {
   /// * [excludePaths]
   final int stackTraceBeginIndex;
 
-  /// Controls the method count in created stack traces.
+  /// Controls the method count in stack traces
+  /// when no [LogEvent.error] was provided.
   ///
-  /// This is used when no stack trace has been provided.
+  /// In case no [LogEvent.stackTrace] was provided,
+  /// [StackTrace.current] will be used to create one.
   ///
-  /// Set to `0` to disable the creation of a stack trace.
+  /// * Set to `0` in order to disable printing a stack trace
+  /// without an error parameter.
+  /// * Set to `null` to remove the method count limit all together.
   ///
   /// See also:
   /// * [errorMethodCount]
-  final int methodCount;
+  final int? methodCount;
 
-  /// Controls the method count in provided stack traces.
+  /// Controls the method count in stack traces
+  /// when [LogEvent.error] was provided.
   ///
-  /// This is used when a stack trace was provided via the error parameter.
+  /// In case no [LogEvent.stackTrace] was provided,
+  /// [StackTrace.current] will be used to create one.
   ///
-  /// Set to `0` in order to disable printing the provided stack trace.
+  /// * Set to `0` in order to disable printing a stack trace
+  /// in case of an error parameter.
+  /// * Set to `null` to remove the method count limit all together.
   ///
   /// See also:
   /// * [methodCount]
-  final int errorMethodCount;
+  final int? errorMethodCount;
 
   /// Controls the length of the divider lines.
   final int lineLength;
@@ -203,12 +211,18 @@ class PrettyPrinter extends LogPrinter {
     var messageStr = stringifyMessage(event.message);
 
     String? stackTraceStr;
-    if (event.stackTrace == null) {
-      if (methodCount > 0) {
-        stackTraceStr = formatStackTrace(StackTrace.current, methodCount);
+    if (event.error != null) {
+      if ((errorMethodCount == null || errorMethodCount! > 0)) {
+        stackTraceStr = formatStackTrace(
+          event.stackTrace ?? StackTrace.current,
+          errorMethodCount,
+        );
       }
-    } else if (errorMethodCount > 0) {
-      stackTraceStr = formatStackTrace(event.stackTrace, errorMethodCount);
+    } else if (methodCount == null || methodCount! > 0) {
+      stackTraceStr = formatStackTrace(
+        event.stackTrace ?? StackTrace.current,
+        methodCount,
+      );
     }
 
     var errorStr = event.error?.toString();
@@ -227,7 +241,7 @@ class PrettyPrinter extends LogPrinter {
     );
   }
 
-  String? formatStackTrace(StackTrace? stackTrace, int methodCount) {
+  String? formatStackTrace(StackTrace? stackTrace, int? methodCount) {
     List<String> lines = stackTrace
         .toString()
         .split('\n')
@@ -241,7 +255,9 @@ class PrettyPrinter extends LogPrinter {
         .toList();
     List<String> formatted = [];
 
-    for (int count = 0; count < min(lines.length, methodCount); count++) {
+    int stackTraceLength =
+        (methodCount != null ? min(lines.length, methodCount) : lines.length);
+    for (int count = 0; count < stackTraceLength; count++) {
       var line = lines[count];
       if (count < stackTraceBeginIndex) {
         continue;
