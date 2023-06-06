@@ -160,8 +160,7 @@ class PrettyPrinter extends LogPrinter {
   final List<String> excludePaths;
 
   /// Contains the parsed rules resulting from [excludeBox] and [noBoxingByDefault].
-  late final Map<Level, bool> includeBox;
-
+  late final Map<Level, bool> _includeBox;
   String _topBorder = '';
   String _middleBorder = '';
   String _bottomBorder = '';
@@ -192,11 +191,11 @@ class PrettyPrinter extends LogPrinter {
     _bottomBorder = '$bottomLeftCorner$doubleDividerLine';
 
     // Translate excludeBox map (constant if default) to includeBox map with all Level enum possibilities
-    includeBox = {};
+    _includeBox = {};
     for (var l in Level.values) {
-      includeBox[l] = !noBoxingByDefault;
+      _includeBox[l] = !noBoxingByDefault;
     }
-    excludeBox.forEach((k, v) => includeBox[k] = !v);
+    excludeBox.forEach((k, v) => _includeBox[k] = !v);
   }
 
   @override
@@ -363,34 +362,34 @@ class PrettyPrinter extends LogPrinter {
     String? stacktrace,
   ) {
     List<String> buffer = [];
-    var verticalLineAtLevel = (includeBox[level]!) ? ('$verticalLine ') : '';
+    var verticalLineAtLevel = (_includeBox[level]!) ? ('$verticalLine ') : '';
     var color = _getLevelColor(level);
-    if (includeBox[level]!) buffer.add(color(_topBorder));
+    if (_includeBox[level]!) buffer.add(color(_topBorder));
 
     if (error != null) {
       for (var line in error.split('\n')) {
         buffer.add(color('$verticalLineAtLevel$line'));
       }
-      if (includeBox[level]!) buffer.add(color(_middleBorder));
+      if (_includeBox[level]!) buffer.add(color(_middleBorder));
     }
 
     if (stacktrace != null) {
       for (var line in stacktrace.split('\n')) {
         buffer.add(color('$verticalLineAtLevel$line'));
       }
-      if (includeBox[level]!) buffer.add(color(_middleBorder));
+      if (_includeBox[level]!) buffer.add(color(_middleBorder));
     }
 
     if (time != null) {
       buffer.add(color('$verticalLineAtLevel$time'));
-      if (includeBox[level]!) buffer.add(color(_middleBorder));
+      if (_includeBox[level]!) buffer.add(color(_middleBorder));
     }
 
     var emoji = _getEmoji(level);
     for (var line in message.split('\n')) {
       buffer.add(color('$verticalLineAtLevel$emoji$line'));
     }
-    if (includeBox[level]!) buffer.add(color(_bottomBorder));
+    if (_includeBox[level]!) buffer.add(color(_bottomBorder));
 
     return buffer;
   }
