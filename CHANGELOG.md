@@ -1,3 +1,12 @@
+## 1.4.0
+
+- Bumped upper SDK constraint to `<4.0.0`.
+- Added `excludePaths` to PrettyPrinter.
+  Thanks to @Stitch-Taotao ([#13](https://github.com/simc/logger/pull/13)).
+- Removed background color for `Level.error` and `Level.wtf` to improve readability.
+- Improved PrettyPrinter documentation.
+- Corrected README notice about ANSI colors.
+
 ## 1.3.0
 
 - Fixed stackTrace count when using `stackTraceBeginIndex`.
