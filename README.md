@@ -177,12 +177,6 @@ class ConsoleOutput extends LogOutput {
 Possible future `LogOutput`s could send to a file, firebase or to Logcat. Feel free to open pull
 requests.
 
-## logger_flutter extension
-
-The [logger_flutter](https://pub.dev/packages/logger_flutter) package is an extension for logger.
-You can add it to any Flutter app.
-Just shake the phone to show the console.
-
 # Acknowledgments
 
 This package was originally created by [Simon Choi](https://github.com/simc).
