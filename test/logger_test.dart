@@ -94,6 +94,23 @@ void main() {
     expect(() => logger.log(Level.nothing, 'Test'), throwsArgumentError);
   });
 
+  test('Multiple Loggers', () {
+    var logger = Logger(level: Level.info, printer: callbackPrinter);
+    var secondLogger = Logger(level: Level.debug, printer: callbackPrinter);
+
+    logger.log(Level.debug, 'Test');
+    expect(printedLevel, null);
+    expect(printedMessage, null);
+    expect(printedError, null);
+    expect(printedStackTrace, null);
+
+    secondLogger.log(Level.debug, 'Test');
+    expect(printedLevel, Level.debug);
+    expect(printedMessage, 'Test');
+    expect(printedError, null);
+    expect(printedStackTrace, null);
+  });
+
   test('Logger.v', () {
     var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;

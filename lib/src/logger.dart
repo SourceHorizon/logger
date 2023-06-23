@@ -50,6 +50,15 @@ class Logger {
   /// All logs with levels below this level will be omitted.
   static Level level = Level.verbose;
 
+  /// The current default implementation of log filter.
+  static LogFilter Function() defaultFilter = () => DevelopmentFilter();
+
+  /// The current default implementation of log printer.
+  static LogPrinter Function() defaultPrinter = () => PrettyPrinter();
+
+  /// The current default implementation of log output.
+  static LogOutput Function() defaultOutput = () => ConsoleOutput();
+
   static final Set<LogCallback> _logCallbacks = {};
 
   static final Set<OutputCallback> _outputCallbacks = {};
@@ -69,9 +78,9 @@ class Logger {
     LogPrinter? printer,
     LogOutput? output,
     Level? level,
-  })  : _filter = filter ?? DevelopmentFilter(),
-        _printer = printer ?? PrettyPrinter(),
-        _output = output ?? ConsoleOutput() {
+  })  : _filter = filter ?? defaultFilter(),
+        _printer = printer ?? defaultPrinter(),
+        _output = output ?? defaultOutput() {
     _filter.init();
     _filter.level = level ?? Logger.level;
     _printer.init();
