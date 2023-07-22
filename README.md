@@ -41,7 +41,7 @@ Instead of a string message, you can also pass other objects like `List`, `Map` 
 You can log with different levels:
 
 ```dart
-logger.v("Verbose log");
+logger.t("Trace log");
 
 logger.d("Debug log");
 
@@ -51,7 +51,7 @@ logger.w("Warning log");
 
 logger.e("Error log");
 
-logger.wtf("What a terrible failure log");
+logger.f("What a fatal log");
 ```
 
 To show only specific log levels, you can set:
@@ -60,7 +60,7 @@ To show only specific log levels, you can set:
 Logger.level = Level.warning;
 ```
 
-This hides all `verbose`, `debug` and `info` log events.
+This hides all `trace`, `debug` and `info` log events.
 
 ## Options
 

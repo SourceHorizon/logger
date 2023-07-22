@@ -18,15 +18,19 @@ class HybridPrinter extends LogPrinter {
   HybridPrinter(
     LogPrinter realPrinter, {
     LogPrinter? debug,
+    LogPrinter? trace,
+    @Deprecated('[verbose] is being deprecated in favor of [trace].')
     LogPrinter? verbose,
+    LogPrinter? fatal,
+    @Deprecated('[wtf] is being deprecated in favor of [fatal].')
     LogPrinter? wtf,
     LogPrinter? info,
     LogPrinter? warning,
     LogPrinter? error,
   }) : _printerMap = {
           Level.debug: debug ?? realPrinter,
-          Level.verbose: verbose ?? realPrinter,
-          Level.wtf: wtf ?? realPrinter,
+          Level.trace: trace ?? verbose ?? realPrinter,
+          Level.fatal: fatal ?? wtf ?? realPrinter,
           Level.info: info ?? realPrinter,
           Level.warning: warning ?? realPrinter,
           Level.error: error ?? realPrinter,

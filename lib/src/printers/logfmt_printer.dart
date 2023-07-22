@@ -7,12 +7,12 @@ import 'package:logger/src/logger.dart';
 /// ```
 class LogfmtPrinter extends LogPrinter {
   static final levelPrefixes = {
-    Level.verbose: 'verbose',
+    Level.trace: 'trace',
     Level.debug: 'debug',
     Level.info: 'info',
     Level.warning: 'warning',
     Level.error: 'error',
-    Level.wtf: 'wtf',
+    Level.fatal: 'fatal',
   };
 
   @override

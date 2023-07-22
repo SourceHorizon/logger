@@ -64,7 +64,14 @@ void main() {
 
     logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
 
-    var levels = Level.values.take(6);
+    var levels = [
+      Level.trace,
+      Level.debug,
+      Level.info,
+      Level.warning,
+      Level.error,
+      Level.fatal,
+    ];
     for (var level in levels) {
       var message = Random().nextInt(999999999).toString();
       logger.log(level, message);
@@ -89,9 +96,10 @@ void main() {
       expect(printedStackTrace, stackTrace);
     }
 
-    expect(() => logger.log(Level.verbose, 'Test', StackTrace.current),
+    expect(() => logger.log(Level.trace, 'Test', StackTrace.current),
         throwsArgumentError);
-    expect(() => logger.log(Level.nothing, 'Test'), throwsArgumentError);
+    expect(() => logger.log(Level.off, 'Test'), throwsArgumentError);
+    expect(() => logger.log(Level.all, 'Test'), throwsArgumentError);
   });
 
   test('Multiple Loggers', () {
@@ -111,11 +119,11 @@ void main() {
     expect(printedStackTrace, null);
   });
 
-  test('Logger.v', () {
+  test('Logger.t', () {
     var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;
-    logger.v('Test', 'Error', stackTrace);
-    expect(printedLevel, Level.verbose);
+    logger.t('Test', 'Error', stackTrace);
+    expect(printedLevel, Level.trace);
     expect(printedMessage, 'Test');
     expect(printedError, 'Error');
     expect(printedStackTrace, stackTrace);
@@ -161,11 +169,11 @@ void main() {
     expect(printedStackTrace, stackTrace);
   });
 
-  test('Logger.wtf', () {
+  test('Logger.f', () {
     var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;
-    logger.wtf('Test', 'Error', stackTrace);
-    expect(printedLevel, Level.wtf);
+    logger.f('Test', 'Error', stackTrace);
+    expect(printedLevel, Level.fatal);
     expect(printedMessage, 'Test');
     expect(printedError, 'Error');
     expect(printedStackTrace, stackTrace);

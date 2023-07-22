@@ -26,21 +26,21 @@ class PrettyPrinter extends LogPrinter {
   static const singleDivider = '┄';
 
   static final levelColors = {
-    Level.verbose: AnsiColor.fg(AnsiColor.grey(0.5)),
+    Level.trace: AnsiColor.fg(AnsiColor.grey(0.5)),
     Level.debug: const AnsiColor.none(),
     Level.info: const AnsiColor.fg(12),
     Level.warning: const AnsiColor.fg(208),
     Level.error: const AnsiColor.fg(196),
-    Level.wtf: const AnsiColor.fg(199),
+    Level.fatal: const AnsiColor.fg(199),
   };
 
   static final levelEmojis = {
-    Level.verbose: '',
+    Level.trace: '',
     Level.debug: '🐛 ',
     Level.info: '💡 ',
     Level.warning: '⚠️ ',
     Level.error: '⛔ ',
-    Level.wtf: '👾 ',
+    Level.fatal: '👾 ',
   };
 
   /// Matches a stacktrace line as generated on Android/iOS devices.
@@ -120,10 +120,10 @@ class PrettyPrinter extends LogPrinter {
   /// to prevent 'boxing' of a specific level,
   /// include it with `true` in the map.
   ///
-  /// Example to prevent boxing of [Level.verbose] and [Level.info]:
+  /// Example to prevent boxing of [Level.trace] and [Level.info]:
   /// ```dart
   /// excludeBox: {
-  ///   Level.verbose: true,
+  ///   Level.trace: true,
   ///   Level.info: true,
   /// },
   /// ```

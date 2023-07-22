@@ -7,16 +7,15 @@ void main() {
   var warningEvent =
       LogEvent(Level.warning, 'warning', 'blah', StackTrace.current);
   var errorEvent = LogEvent(Level.error, 'debug', 'blah', StackTrace.current);
-  var verboseEvent =
-      LogEvent(Level.verbose, 'debug', 'blah', StackTrace.current);
-  var wtfEvent = LogEvent(Level.wtf, 'debug', 'blah', StackTrace.current);
+  var traceEvent = LogEvent(Level.trace, 'debug', 'blah', StackTrace.current);
+  var fatalEvent = LogEvent(Level.fatal, 'debug', 'blah', StackTrace.current);
 
   var allEvents = [
     debugEvent,
     warningEvent,
     errorEvent,
-    verboseEvent,
-    wtfEvent
+    traceEvent,
+    fatalEvent
   ];
 
   test('prefixes logs', () {

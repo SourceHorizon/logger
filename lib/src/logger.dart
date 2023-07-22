@@ -8,13 +8,25 @@ import 'package:logger/src/printers/pretty_printer.dart';
 /// [Level]s to control logging output. Logging can be enabled to include all
 /// levels above certain [Level].
 enum Level {
-  verbose,
-  debug,
-  info,
-  warning,
-  error,
-  wtf,
-  nothing,
+  all(0),
+  @Deprecated('[verbose] is being deprecated in favor of [trace].')
+  verbose(999),
+  trace(1000),
+  debug(2000),
+  info(3000),
+  warning(4000),
+  error(5000),
+  @Deprecated('[wtf] is being deprecated in favor of [fatal].')
+  wtf(5999),
+  fatal(6000),
+  @Deprecated('[nothing] is being deprecated in favor of [off].')
+  nothing(9999),
+  off(10000),
+  ;
+
+  final int levelInt;
+
+  const Level(this.levelInt);
 }
 
 class LogEvent {
@@ -48,7 +60,7 @@ class Logger {
   /// The current logging level of the app.
   ///
   /// All logs with levels below this level will be omitted.
-  static Level level = Level.verbose;
+  static Level level = Level.trace;
 
   /// The current default implementation of log filter.
   static LogFilter Function() defaultFilter = () => DevelopmentFilter();
@@ -88,8 +100,15 @@ class Logger {
   }
 
   /// Log a message at level [Level.verbose].
+  @Deprecated(
+      "[Level.verbose] is being deprecated in favor of [Level.trace], use [t] instead.")
   void v(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    log(Level.verbose, message, error, stackTrace);
+    t(message, error, stackTrace);
+  }
+
+  /// Log a message at level [Level.trace].
+  void t(dynamic message, [dynamic error, StackTrace? stackTrace]) {
+    log(Level.trace, message, error, stackTrace);
   }
 
   /// Log a message at level [Level.debug].
@@ -113,8 +132,15 @@ class Logger {
   }
 
   /// Log a message at level [Level.wtf].
+  @Deprecated(
+      "[Level.wtf] is being deprecated in favor of [Level.fatal], use [f] instead.")
   void wtf(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    log(Level.wtf, message, error, stackTrace);
+    f(message, error, stackTrace);
+  }
+
+  /// Log a message at level [Level.fatal].
+  void f(dynamic message, [dynamic error, StackTrace? stackTrace]) {
+    log(Level.fatal, message, error, stackTrace);
   }
 
   /// Log a message with [level].
@@ -124,8 +150,11 @@ class Logger {
       throw ArgumentError('Logger has already been closed.');
     } else if (error != null && error is StackTrace) {
       throw ArgumentError('Error parameter cannot take a StackTrace!');
-    } else if (level == Level.nothing) {
-      throw ArgumentError('Log events cannot have Level.nothing');
+    } else if (level == Level.all) {
+      throw ArgumentError('Log events cannot have Level.all');
+      // ignore: deprecated_member_use_from_same_package
+    } else if (level == Level.off || level == Level.nothing) {
+      throw ArgumentError('Log events cannot have Level.off');
     }
 
     var logEvent = LogEvent(level, message, error, stackTrace);

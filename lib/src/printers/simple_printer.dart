@@ -10,21 +10,21 @@ import 'package:logger/src/logger.dart';
 /// ```
 class SimplePrinter extends LogPrinter {
   static final levelPrefixes = {
-    Level.verbose: '[V]',
+    Level.trace: '[T]',
     Level.debug: '[D]',
     Level.info: '[I]',
     Level.warning: '[W]',
     Level.error: '[E]',
-    Level.wtf: '[WTF]',
+    Level.fatal: '[FATAL]',
   };
 
   static final levelColors = {
-    Level.verbose: AnsiColor.fg(AnsiColor.grey(0.5)),
+    Level.trace: AnsiColor.fg(AnsiColor.grey(0.5)),
     Level.debug: const AnsiColor.none(),
     Level.info: const AnsiColor.fg(12),
     Level.warning: const AnsiColor.fg(208),
     Level.error: const AnsiColor.fg(196),
-    Level.wtf: const AnsiColor.fg(199),
+    Level.fatal: const AnsiColor.fg(199),
   };
 
   final bool printTime;
