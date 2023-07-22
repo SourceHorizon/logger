@@ -25,7 +25,7 @@ class PrettyPrinter extends LogPrinter {
   static const doubleDivider = '─';
   static const singleDivider = '┄';
 
-  static final levelColors = {
+  static final Map<Level, AnsiColor> defaultLevelColors = {
     Level.trace: AnsiColor.fg(AnsiColor.grey(0.5)),
     Level.debug: const AnsiColor.none(),
     Level.info: const AnsiColor.fg(12),
@@ -34,13 +34,13 @@ class PrettyPrinter extends LogPrinter {
     Level.fatal: const AnsiColor.fg(199),
   };
 
-  static final levelEmojis = {
+  static final Map<Level, String> defaultLevelEmojis = {
     Level.trace: '',
-    Level.debug: '🐛 ',
-    Level.info: '💡 ',
-    Level.warning: '⚠️ ',
-    Level.error: '⛔ ',
-    Level.fatal: '👾 ',
+    Level.debug: '🐛',
+    Level.info: '💡',
+    Level.warning: '⚠️',
+    Level.error: '⛔',
+    Level.fatal: '👾',
   };
 
   /// Matches a stacktrace line as generated on Android/iOS devices.
@@ -173,6 +173,16 @@ class PrettyPrinter extends LogPrinter {
   String _middleBorder = '';
   String _bottomBorder = '';
 
+  /// Controls the colors used for the different log levels.
+  ///
+  /// Default fallbacks are modifiable via [defaultLevelColors].
+  final Map<Level, AnsiColor>? levelColors;
+
+  /// Controls the emojis used for the different log levels.
+  ///
+  /// Default fallbacks are modifiable via [defaultLevelEmojis].
+  final Map<Level, String>? levelEmojis;
+
   PrettyPrinter({
     this.stackTraceBeginIndex = 0,
     this.methodCount = 2,
@@ -184,6 +194,8 @@ class PrettyPrinter extends LogPrinter {
     this.excludeBox = const {},
     this.noBoxingByDefault = false,
     this.excludePaths = const [],
+    this.levelColors,
+    this.levelEmojis,
   }) {
     _startTime ??= DateTime.now();
 
@@ -355,19 +367,21 @@ class PrettyPrinter extends LogPrinter {
   }
 
   AnsiColor _getLevelColor(Level level) {
+    AnsiColor? color;
     if (colors) {
-      return levelColors[level]!;
-    } else {
-      return const AnsiColor.none();
+      color = levelColors?[level] ?? defaultLevelColors[level];
     }
+    return color ?? const AnsiColor.none();
   }
 
   String _getEmoji(Level level) {
     if (printEmojis) {
-      return levelEmojis[level]!;
-    } else {
-      return '';
+      final String? emoji = levelEmojis?[level] ?? defaultLevelEmojis[level];
+      if (emoji != null) {
+        return '$emoji ';
+      }
     }
+    return '';
   }
 
   List<String> _formatAndPrint(

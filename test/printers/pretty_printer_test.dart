@@ -19,8 +19,83 @@ void main() {
 
     final actualLog = emojiPrettyPrinter.log(event);
     final actualLogString = readMessage(actualLog);
-    expect(actualLogString, contains(PrettyPrinter.levelEmojis[Level.debug]));
+    expect(actualLogString,
+        contains(PrettyPrinter.defaultLevelEmojis[Level.debug]));
     expect(actualLogString, contains(expectedMessage));
+  });
+
+  test('should print custom emoji or fallback', () {
+    final expectedMessage = 'some message with an emoji';
+    final emojiPrettyPrinter = PrettyPrinter(
+      printEmojis: true,
+      levelEmojis: {
+        Level.debug: '🧵',
+      },
+    );
+
+    final firstEvent = LogEvent(
+      Level.debug,
+      expectedMessage,
+      'some error',
+      StackTrace.current,
+    );
+    final emojiLogString = readMessage(emojiPrettyPrinter.log(firstEvent));
+    expect(
+      emojiLogString,
+      contains(
+          '${emojiPrettyPrinter.levelEmojis![Level.debug]!} $expectedMessage'),
+    );
+
+    final secondEvent = LogEvent(
+      Level.info,
+      expectedMessage,
+      'some error',
+      StackTrace.current,
+    );
+    final fallbackEmojiLogString =
+        readMessage(emojiPrettyPrinter.log(secondEvent));
+    expect(
+      fallbackEmojiLogString,
+      contains(
+          '${PrettyPrinter.defaultLevelEmojis[Level.info]!} $expectedMessage'),
+    );
+  });
+
+  test('should print custom color or fallback', () {
+    final expectedMessage = 'some message with a color';
+    final coloredPrettyPrinter = PrettyPrinter(
+      colors: true,
+      levelColors: {
+        Level.debug: const AnsiColor.fg(50),
+      },
+    );
+
+    final firstEvent = LogEvent(
+      Level.debug,
+      expectedMessage,
+      'some error',
+      StackTrace.current,
+    );
+    final coloredLogString = readMessage(coloredPrettyPrinter.log(firstEvent));
+    expect(coloredLogString, contains(expectedMessage));
+    expect(
+      coloredLogString,
+      startsWith(coloredPrettyPrinter.levelColors![Level.debug]!.toString()),
+    );
+
+    final secondEvent = LogEvent(
+      Level.info,
+      expectedMessage,
+      'some error',
+      StackTrace.current,
+    );
+    final fallbackColoredLogString =
+        readMessage(coloredPrettyPrinter.log(secondEvent));
+    expect(fallbackColoredLogString, contains(expectedMessage));
+    expect(
+      fallbackColoredLogString,
+      startsWith(PrettyPrinter.defaultLevelColors[Level.info]!.toString()),
+    );
   });
 
   test('deal with string type message', () {
