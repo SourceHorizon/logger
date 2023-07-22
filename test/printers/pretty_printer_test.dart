@@ -6,7 +6,6 @@ void main() {
     return log.reduce((acc, val) => "$acc\n$val");
   }
 
-  final prettyPrinter = PrettyPrinter(printEmojis: false);
   test('should print an emoji when option is enabled', () {
     final expectedMessage = 'some message with an emoji';
     final emojiPrettyPrinter = PrettyPrinter(printEmojis: true);
@@ -25,6 +24,7 @@ void main() {
   });
 
   test('deal with string type message', () {
+    final prettyPrinter = PrettyPrinter();
     final expectedMessage = 'normally computed message';
     final withFunction = LogEvent(
       Level.debug,
@@ -41,7 +41,9 @@ void main() {
       contains(expectedMessage),
     );
   });
+
   test('deal with Map type message', () {
+    final prettyPrinter = PrettyPrinter();
     final expectedMsgMap = {'foo': 123, 1: 2, true: 'false'};
     var withMap = LogEvent(
       Level.debug,
@@ -61,6 +63,7 @@ void main() {
   });
 
   test('deal with Iterable type message', () {
+    final prettyPrinter = PrettyPrinter();
     final expectedMsgItems = ['first', 'second', 'third', 'last'];
     var withIterable = LogEvent(
       Level.debug,
@@ -79,6 +82,7 @@ void main() {
   });
 
   test('deal with Function type message', () {
+    final prettyPrinter = PrettyPrinter();
     final expectedMessage = 'heavily computed very pretty Message';
     final withFunction = LogEvent(
       Level.debug,
