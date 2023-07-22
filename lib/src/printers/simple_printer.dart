@@ -16,6 +16,7 @@ class SimplePrinter extends LogPrinter {
     Level.warning: '[W]',
     Level.error: '[E]',
     Level.wtf: '[WTF]',
+    Level.success: '[S]',
   };
 
   static final levelColors = {
@@ -25,6 +26,7 @@ class SimplePrinter extends LogPrinter {
     Level.warning: AnsiColor.fg(208),
     Level.error: AnsiColor.fg(196),
     Level.wtf: AnsiColor.fg(199),
+    Level.success: AnsiColor.fg(46),
   };
 
   final bool printTime;

@@ -25,5 +25,7 @@ void demo() {
 
   loggerNoStack.v({'key': 5, 'value': 'something'});
 
+  loggerNoStack.s("This is a success message!");
+
   Logger(printer: SimplePrinter(colors: true)).v('boom');
 }

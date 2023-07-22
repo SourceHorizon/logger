@@ -13,6 +13,7 @@ class LogfmtPrinter extends LogPrinter {
     Level.warning: 'warning',
     Level.error: 'error',
     Level.wtf: 'wtf',
+    Level.success: 'success',
   };
 
   @override

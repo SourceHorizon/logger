@@ -23,6 +23,7 @@ class HybridPrinter extends LogPrinter {
     LogPrinter? info,
     LogPrinter? warning,
     LogPrinter? error,
+    LogPrinter? success,
   }) : _printerMap = {
           Level.debug: debug ?? realPrinter,
           Level.verbose: verbose ?? realPrinter,
@@ -30,6 +31,7 @@ class HybridPrinter extends LogPrinter {
           Level.info: info ?? realPrinter,
           Level.warning: warning ?? realPrinter,
           Level.error: error ?? realPrinter,
+          Level.success: success ?? realPrinter,
         };
 
   @override

@@ -15,6 +15,7 @@ enum Level {
   error,
   wtf,
   nothing,
+  success
 }
 
 class LogEvent {
@@ -115,6 +116,11 @@ class Logger {
   /// Log a message at level [Level.wtf].
   void wtf(dynamic message, [dynamic error, StackTrace? stackTrace]) {
     log(Level.wtf, message, error, stackTrace);
+  }
+
+  /// log a message at level [Level.success].
+  void s(dynamic message, [dynamic error, StackTrace? stackTrace]) {
+    log(Level.success, message, error, stackTrace);
   }
 
   /// Log a message with [level].

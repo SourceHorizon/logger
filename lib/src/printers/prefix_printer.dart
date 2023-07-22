@@ -24,6 +24,7 @@ class PrefixPrinter extends LogPrinter {
       Level.info: info ?? 'INFO',
       Level.warning: warning ?? 'WARNING',
       Level.error: error ?? 'ERROR',
+      Level.success: 'SUCCESS',
     };
 
     var len = _longestPrefixLength();

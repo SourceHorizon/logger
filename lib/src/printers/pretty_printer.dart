@@ -32,6 +32,7 @@ class PrettyPrinter extends LogPrinter {
     Level.warning: AnsiColor.fg(208),
     Level.error: AnsiColor.fg(196),
     Level.wtf: AnsiColor.fg(199),
+    Level.success: AnsiColor.fg(48),
   };
 
   static final levelEmojis = {
@@ -41,6 +42,7 @@ class PrettyPrinter extends LogPrinter {
     Level.warning: '⚠️ ',
     Level.error: '⛔ ',
     Level.wtf: '👾 ',
+    Level.success: '✅ ',
   };
 
   /// Matches a stacktrace line as generated on Android/iOS devices.
