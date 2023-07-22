@@ -27,11 +27,11 @@ class PrettyPrinter extends LogPrinter {
 
   static final levelColors = {
     Level.verbose: AnsiColor.fg(AnsiColor.grey(0.5)),
-    Level.debug: AnsiColor.none(),
-    Level.info: AnsiColor.fg(12),
-    Level.warning: AnsiColor.fg(208),
-    Level.error: AnsiColor.fg(196),
-    Level.wtf: AnsiColor.fg(199),
+    Level.debug: const AnsiColor.none(),
+    Level.info: const AnsiColor.fg(12),
+    Level.warning: const AnsiColor.fg(208),
+    Level.error: const AnsiColor.fg(196),
+    Level.wtf: const AnsiColor.fg(199),
   };
 
   static final levelEmojis = {
@@ -343,7 +343,7 @@ class PrettyPrinter extends LogPrinter {
     if (colors) {
       return levelColors[level]!;
     } else {
-      return AnsiColor.none();
+      return const AnsiColor.none();
     }
   }
 
