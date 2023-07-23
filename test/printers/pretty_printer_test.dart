@@ -13,8 +13,8 @@ void main() {
     final event = LogEvent(
       Level.debug,
       expectedMessage,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
 
     final actualLog = emojiPrettyPrinter.log(event);
@@ -36,8 +36,8 @@ void main() {
     final firstEvent = LogEvent(
       Level.debug,
       expectedMessage,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
     final emojiLogString = readMessage(emojiPrettyPrinter.log(firstEvent));
     expect(
@@ -49,8 +49,8 @@ void main() {
     final secondEvent = LogEvent(
       Level.info,
       expectedMessage,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
     final fallbackEmojiLogString =
         readMessage(emojiPrettyPrinter.log(secondEvent));
@@ -73,8 +73,8 @@ void main() {
     final firstEvent = LogEvent(
       Level.debug,
       expectedMessage,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
     final coloredLogString = readMessage(coloredPrettyPrinter.log(firstEvent));
     expect(coloredLogString, contains(expectedMessage));
@@ -86,8 +86,8 @@ void main() {
     final secondEvent = LogEvent(
       Level.info,
       expectedMessage,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
     final fallbackColoredLogString =
         readMessage(coloredPrettyPrinter.log(secondEvent));
@@ -104,8 +104,8 @@ void main() {
     final withFunction = LogEvent(
       Level.debug,
       expectedMessage,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
 
     final actualLog = prettyPrinter.log(withFunction);
@@ -123,8 +123,8 @@ void main() {
     var withMap = LogEvent(
       Level.debug,
       expectedMsgMap,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
 
     final actualLog = prettyPrinter.log(withMap);
@@ -143,8 +143,8 @@ void main() {
     var withIterable = LogEvent(
       Level.debug,
       ['first', 'second', 'third', 'last'],
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
     final actualLog = prettyPrinter.log(withIterable);
     final actualLogString = readMessage(actualLog);
@@ -162,8 +162,8 @@ void main() {
     final withFunction = LogEvent(
       Level.debug,
       () => expectedMessage,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
 
     final actualLog = prettyPrinter.log(withFunction);
@@ -182,8 +182,8 @@ void main() {
     final withFunction = LogEvent(
       Level.debug,
       "some message",
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
 
     final actualLog = prettyPrinter.log(withFunction);

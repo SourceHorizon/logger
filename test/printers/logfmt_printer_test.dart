@@ -9,8 +9,8 @@ void main() {
       printer.log(LogEvent(
         Level.debug,
         'some message',
-        Exception('boom'),
-        StackTrace.current,
+        error: Exception('boom'),
+        stackTrace: StackTrace.current,
       ))[0],
       contains('level=debug'),
     );
@@ -21,8 +21,8 @@ void main() {
       printer.log(LogEvent(
         Level.debug,
         'some message',
-        Exception('boom'),
-        StackTrace.current,
+        error: Exception('boom'),
+        stackTrace: StackTrace.current,
       ))[0],
       contains('msg="some message"'),
     );
@@ -32,8 +32,8 @@ void main() {
     var output = printer.log(LogEvent(
       Level.debug,
       {'a': 123, 'foo': 'bar baz'},
-      Exception('boom'),
-      StackTrace.current,
+      error: Exception('boom'),
+      stackTrace: StackTrace.current,
     ))[0];
 
     expect(output, contains('a=123'));
@@ -44,8 +44,8 @@ void main() {
     var output = printer.log(LogEvent(
       Level.debug,
       'some message',
-      Exception('boom'),
-      StackTrace.current,
+      error: Exception('boom'),
+      stackTrace: StackTrace.current,
     ))[0];
     expect(output, contains('error="Exception: boom"'));
 

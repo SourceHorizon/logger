@@ -7,8 +7,8 @@ void main() {
   var event = LogEvent(
     Level.trace,
     'some message',
-    'some error',
-    StackTrace.current,
+    error: 'some error',
+    stackTrace: StackTrace.current,
   );
 
   var plainPrinter = SimplePrinter(colors: false, printTime: false);
@@ -52,8 +52,8 @@ void main() {
     var withoutError = LogEvent(
       Level.debug,
       'some message',
-      null,
-      StackTrace.current,
+      error: null,
+      stackTrace: StackTrace.current,
     );
     var outputs = SimplePrinter().log(withoutError);
 
@@ -64,8 +64,8 @@ void main() {
     var withMap = LogEvent(
       Level.debug,
       {'foo': 123},
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
 
     expect(
@@ -78,8 +78,8 @@ void main() {
     var withIterable = LogEvent(
       Level.debug,
       [1, 2, 3, 4],
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
 
     expect(
@@ -93,8 +93,8 @@ void main() {
     var withFunction = LogEvent(
       Level.debug,
       () => expectedMessage,
-      'some error',
-      StackTrace.current,
+      error: 'some error',
+      stackTrace: StackTrace.current,
     );
 
     expect(

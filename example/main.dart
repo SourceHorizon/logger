@@ -21,7 +21,7 @@ void demo() {
 
   loggerNoStack.w('Just a warning!');
 
-  logger.e('Error! Something bad happened', 'Test Error');
+  logger.e('Error! Something bad happened', error: 'Test Error');
 
   loggerNoStack.t({'key': 5, 'value': 'something'});
 

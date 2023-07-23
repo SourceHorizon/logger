@@ -18,11 +18,14 @@ void main() {
   var printerB = TestLogPrinter();
   var printerC = TestLogPrinter();
 
-  var debugEvent = LogEvent(Level.debug, 'debug', 'blah', StackTrace.current);
-  var infoEvent = LogEvent(Level.info, 'info', 'blah', StackTrace.current);
-  var warningEvent =
-      LogEvent(Level.warning, 'warning', 'blah', StackTrace.current);
-  var errorEvent = LogEvent(Level.error, 'error', 'blah', StackTrace.current);
+  var debugEvent = LogEvent(Level.debug, 'debug',
+      error: 'blah', stackTrace: StackTrace.current);
+  var infoEvent = LogEvent(Level.info, 'info',
+      error: 'blah', stackTrace: StackTrace.current);
+  var warningEvent = LogEvent(Level.warning, 'warning',
+      error: 'blah', stackTrace: StackTrace.current);
+  var errorEvent = LogEvent(Level.error, 'error',
+      error: 'blah', stackTrace: StackTrace.current);
 
   var hybridPrinter = HybridPrinter(printerA, debug: printerB, error: printerC);
   test('uses wrapped printer by default', () {

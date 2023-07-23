@@ -5,9 +5,9 @@ void main() {
   test('Memory output buffer size is limited', () {
     var output = MemoryOutput(bufferSize: 2);
 
-    final event0 = OutputEvent(LogEvent(Level.info, null), []);
-    final event1 = OutputEvent(LogEvent(Level.info, null), []);
-    final event2 = OutputEvent(LogEvent(Level.info, null), []);
+    final event0 = OutputEvent(LogEvent(Level.info, ""), []);
+    final event1 = OutputEvent(LogEvent(Level.info, ""), []);
+    final event2 = OutputEvent(LogEvent(Level.info, ""), []);
 
     output.output(event0);
     output.output(event1);

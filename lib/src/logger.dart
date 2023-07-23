@@ -32,14 +32,19 @@ enum Level {
 class LogEvent {
   final Level level;
   final dynamic message;
-  final dynamic error;
+  final Object? error;
   final StackTrace? stackTrace;
 
   /// Time when this log was created.
   final DateTime time;
 
-  LogEvent(this.level, this.message, [this.error, this.stackTrace])
-      : time = DateTime.now();
+  LogEvent(
+    this.level,
+    this.message, {
+    DateTime? time,
+    this.error,
+    this.stackTrace,
+  }) : time = time ?? DateTime.now();
 }
 
 class OutputEvent {
@@ -102,50 +107,96 @@ class Logger {
   /// Log a message at level [Level.verbose].
   @Deprecated(
       "[Level.verbose] is being deprecated in favor of [Level.trace], use [t] instead.")
-  void v(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    t(message, error, stackTrace);
+  void v(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    t(message, time: time, error: error, stackTrace: stackTrace);
   }
 
   /// Log a message at level [Level.trace].
-  void t(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    log(Level.trace, message, error, stackTrace);
+  void t(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    log(Level.trace, message, time: time, error: error, stackTrace: stackTrace);
   }
 
   /// Log a message at level [Level.debug].
-  void d(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    log(Level.debug, message, error, stackTrace);
+  void d(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    log(Level.debug, message, time: time, error: error, stackTrace: stackTrace);
   }
 
   /// Log a message at level [Level.info].
-  void i(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    log(Level.info, message, error, stackTrace);
+  void i(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    log(Level.info, message, time: time, error: error, stackTrace: stackTrace);
   }
 
   /// Log a message at level [Level.warning].
-  void w(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    log(Level.warning, message, error, stackTrace);
+  void w(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    log(Level.warning, message,
+        time: time, error: error, stackTrace: stackTrace);
   }
 
   /// Log a message at level [Level.error].
-  void e(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    log(Level.error, message, error, stackTrace);
+  void e(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    log(Level.error, message, time: time, error: error, stackTrace: stackTrace);
   }
 
   /// Log a message at level [Level.wtf].
   @Deprecated(
       "[Level.wtf] is being deprecated in favor of [Level.fatal], use [f] instead.")
-  void wtf(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    f(message, error, stackTrace);
+  void wtf(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    f(message, time: time, error: error, stackTrace: stackTrace);
   }
 
   /// Log a message at level [Level.fatal].
-  void f(dynamic message, [dynamic error, StackTrace? stackTrace]) {
-    log(Level.fatal, message, error, stackTrace);
+  void f(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    log(Level.fatal, message, time: time, error: error, stackTrace: stackTrace);
   }
 
   /// Log a message with [level].
-  void log(Level level, dynamic message,
-      [dynamic error, StackTrace? stackTrace]) {
+  void log(
+    Level level,
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     if (!_active) {
       throw ArgumentError('Logger has already been closed.');
     } else if (error != null && error is StackTrace) {
@@ -157,7 +208,13 @@ class Logger {
       throw ArgumentError('Log events cannot have Level.off');
     }
 
-    var logEvent = LogEvent(level, message, error, stackTrace);
+    var logEvent = LogEvent(
+      level,
+      message,
+      time: time,
+      error: error,
+      stackTrace: stackTrace,
+    );
     for (var callback in _logCallbacks) {
       callback(logEvent);
     }

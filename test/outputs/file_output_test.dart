@@ -17,9 +17,9 @@ void main() {
     var output = FileOutput(file: file);
     await output.init();
 
-    final event0 = OutputEvent(LogEvent(Level.info, null), ["First event"]);
-    final event1 = OutputEvent(LogEvent(Level.info, null), ["Second event"]);
-    final event2 = OutputEvent(LogEvent(Level.info, null), ["Third event"]);
+    final event0 = OutputEvent(LogEvent(Level.info, ""), ["First event"]);
+    final event1 = OutputEvent(LogEvent(Level.info, ""), ["Second event"]);
+    final event2 = OutputEvent(LogEvent(Level.info, ""), ["Third event"]);
 
     output.output(event0);
     output.output(event1);
