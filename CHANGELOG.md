@@ -1,3 +1,44 @@
+## 2.0.0
+
+- Fixed supported platforms list.
+- Removed reference to outdated `logger_flutter` project.
+  Thanks to @yangsfang ([#32](https://github.com/Bungeefan/logger/pull/32)).
+- Added override capability for logger defaults.
+  Thanks to @yangsfang ([#34](https://github.com/Bungeefan/logger/pull/34)).
+- `Level.verbose`, `Level.wtf` and `Level.nothing` have been deprecated and are replaced
+  by `Level.trace`, `Level.fatal` and `Level.off`.
+  Additionally `Level.all` has been added.
+- PrettyPrinter: Added `levelColors` and `levelEmojis` as constructor parameter.
+
+### Breaking changes
+
+- `log` signature has been changed to closer match dart's developer `log` function and allow for
+  future
+  optional parameters.
+
+  Additionally, `time` has been added as an optional named parameter to support providing custom
+  timestamps for LogEvents instead of `DateTime.now()`.
+
+  #### Migration:
+    - Before:
+      ```dart
+      logger.e("An error occurred!", error, stackTrace);
+      ```
+    - After:
+      ```dart
+      logger.e("An error occurred!", error: error, stackTrace: stackTrace);
+      ```
+- `init` and `close` methods of `LogFilter`, `LogOutput` and `LogPrinter` are now async along
+  with `Logger.close()`.
+  (Fixes FileOutput)
+- LogListeners are now called on every LogEvent independent of the filter.
+- PrettyPrinter: `includeBox` is now private.
+- PrettyPrinter: `errorMethodCount` is now only considered if an error has been provided.
+  Otherwise `methodCount` is used.
+- PrettyPrinter: Static `levelColors` and `levelEmojis` have been renamed to `defaultLevelColors`
+  and `defaultLevelEmojis` and are used as fallback for their respective constructor parameters.
+- Levels are now sorted by their respective value instead of the enum index (Order didn't change).
+
 ## 1.4.0
 
 - Bumped upper SDK constraint to `<4.0.0`.
