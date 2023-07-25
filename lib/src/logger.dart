@@ -24,9 +24,9 @@ enum Level {
   off(10000),
   ;
 
-  final int levelInt;
+  final int value;
 
-  const Level(this.levelInt);
+  const Level(this.value);
 }
 
 class LogEvent {
