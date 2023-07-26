@@ -49,9 +49,9 @@ logger.i("Info log");
 
 logger.w("Warning log");
 
-logger.e("Error log");
+logger.e("Error log", error: 'Test Error');
 
-logger.f("What a fatal log");
+logger.f("What a fatal log", error: error, stackTrace: stackTrace);
 ```
 
 To show only specific log levels, you can set:
