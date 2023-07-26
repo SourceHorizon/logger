@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Updated README to reflect v2.0.0 log signature change.
+
 ## 2.0.0
 
 - Fixed supported platforms list.
