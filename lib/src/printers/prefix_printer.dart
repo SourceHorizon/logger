@@ -1,5 +1,5 @@
-import 'package:logger/src/log_printer.dart';
-import 'package:logger/src/logger.dart';
+import '../log_printer.dart';
+import '../logger.dart';
 
 /// A decorator for a [LogPrinter] that allows for the prepending of every
 /// line in the log output with a string for the level of that log. For

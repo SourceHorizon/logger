@@ -6,4 +6,5 @@ include: package:lints/recommended.yaml
 linter:
   rules:
     - prefer_const_constructors
+    - prefer_relative_imports
     - unawaited_futures

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:logger/src/ansi_color.dart';
-import 'package:logger/src/log_printer.dart';
-import 'package:logger/src/logger.dart';
+import '../ansi_color.dart';
+import '../log_printer.dart';
+import '../logger.dart';
 
 /// Default implementation of [LogPrinter].
 ///
