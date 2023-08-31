@@ -7,7 +7,12 @@ import 'logger.dart';
 /// You can implement your own `LogFilter` or use [DevelopmentFilter].
 /// Every implementation should consider [Logger.level].
 abstract class LogFilter {
-  Level? level;
+  Level? _level;
+
+  // Still nullable for backwards compatibility.
+  Level? get level => _level ?? Logger.level;
+
+  set level(Level? value) => _level = value;
 
   Future<void> init() async {}
 

@@ -51,7 +51,9 @@ class Logger {
         _printer = printer ?? defaultPrinter(),
         _output = output ?? defaultOutput() {
     _filter.init();
-    _filter.level = level ?? Logger.level;
+    if (level != null) {
+      _filter.level = level;
+    }
     _printer.init();
     _output.init();
   }
