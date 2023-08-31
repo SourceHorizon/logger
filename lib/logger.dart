@@ -4,10 +4,13 @@ library logger;
 export 'src/ansi_color.dart';
 export 'src/filters/development_filter.dart';
 export 'src/filters/production_filter.dart';
+export 'src/log_event.dart';
 export 'src/log_filter.dart';
+export 'src/log_level.dart';
 export 'src/log_output.dart';
 export 'src/log_printer.dart';
 export 'src/logger.dart';
+export 'src/output_event.dart';
 export 'src/outputs/console_output.dart';
 export 'src/outputs/file_output_stub.dart'
     if (dart.library.io) 'src/outputs/file_output.dart';

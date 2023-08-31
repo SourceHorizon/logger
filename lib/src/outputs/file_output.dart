@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../log_output.dart';
-import '../logger.dart';
+import '../output_event.dart';
 
 /// Writes the log output to a file.
 class FileOutput extends LogOutput {

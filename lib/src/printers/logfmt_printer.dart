@@ -1,5 +1,6 @@
+import '../log_event.dart';
+import '../log_level.dart';
 import '../log_printer.dart';
-import '../logger.dart';
 
 /// Outputs a logfmt message:
 /// ```

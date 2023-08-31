@@ -1,3 +1,5 @@
+import 'log_event.dart';
+import 'log_level.dart';
 import 'logger.dart';
 
 /// An abstract filter of log messages.

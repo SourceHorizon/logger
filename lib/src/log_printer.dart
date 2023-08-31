@@ -1,4 +1,4 @@
-import 'logger.dart';
+import 'log_event.dart';
 
 /// An abstract handler of log events.
 ///

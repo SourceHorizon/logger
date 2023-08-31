@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import '../ansi_color.dart';
+import '../log_event.dart';
+import '../log_level.dart';
 import '../log_printer.dart';
-import '../logger.dart';
 
 /// Outputs simple log messages:
 /// ```
