@@ -210,6 +210,7 @@ void main() {
     expect(filter.level, Logger.level);
 
     final initLevel = Level.warning;
+    // ignore: unused_local_variable
     var logger = Logger(
       filter: filter,
       printer: callbackPrinter,
