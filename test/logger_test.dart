@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 typedef PrinterCallback = List<String> Function(
   Level level,
   dynamic message,
-  dynamic error,
+  Object? error,
   StackTrace? stackTrace,
 );
 
