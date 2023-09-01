@@ -7,7 +7,7 @@ import '../log_filter.dart';
 /// In release mode ALL logs are omitted.
 class DevelopmentFilter extends LogFilter {
   @override
-  bool shouldLog(LogEvent event) {
+  FilterResult shouldLog(LogEvent event) {
     var shouldLog = false;
     assert(() {
       if (event.level.value >= level.value) {
@@ -15,6 +15,6 @@ class DevelopmentFilter extends LogFilter {
       }
       return true;
     }());
-    return shouldLog;
+    return shouldLog ? FilterResult.accept : FilterResult.deny;
   }
 }

@@ -18,7 +18,15 @@ abstract class LogFilter {
   /// it will be printed or canceled.
   ///
   /// Returns `true` if the message should be logged.
-  bool shouldLog(LogEvent event);
+  FilterResult shouldLog(LogEvent event);
 
   Future<void> destroy() async {}
+}
+
+/// Describes the filter result of a log request.
+enum FilterResult {
+  accept,
+  neutral,
+  deny,
+  ;
 }

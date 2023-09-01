@@ -18,7 +18,8 @@ class Logger {
   static Level defaultLevel = Level.trace;
 
   /// The current default implementation of log filter.
-  static LogFilter Function() defaultFilter = () => DevelopmentFilter();
+  static List<LogFilter> Function() defaultFilters =
+      () => [DevelopmentFilter()];
 
   /// The current default implementation of log printer.
   static LogPrinter Function() defaultPrinter = () => PrettyPrinter();
@@ -35,33 +36,36 @@ class Logger {
   /// All logs with levels below this level will be omitted.
   Level level;
 
-  final LogFilter _filter;
+  final List<LogFilter> _filters;
   final LogPrinter _printer;
   final LogOutput _output;
   bool _active = true;
 
   /// Create a new instance of Logger.
   ///
-  /// You can provide a custom [printer], [filter] and [output]. Otherwise the
+  /// You can provide a custom [printers], [filters] and [outputs]. Otherwise the
   /// defaults: [PrettyPrinter], [DevelopmentFilter] and [ConsoleOutput] will be
   /// used.
   Logger({
     Level? level,
-    LogFilter? filter,
+    @Deprecated("Use [filters] instead.") LogFilter? filter,
+    List<LogFilter>? filters,
     LogPrinter? printer,
     LogOutput? output,
   })  : level = level ?? defaultLevel,
-        _filter = filter ?? defaultFilter(),
+        _filters = filter != null ? [filter] : (filters ?? defaultFilters()),
         _printer = printer ?? defaultPrinter(),
         _output = output ?? defaultOutput() {
-    _filter.logger = this;
-    _printer.logger = this;
-    _output.logger = this;
+    assert(_filters.isNotEmpty, "Filters cannot be empty");
 
-    var filterInit = _filter.init();
-    var printerInit = _printer.init();
-    var outputInit = _output.init();
-    _initialization = Future.wait([filterInit, printerInit, outputInit]);
+    List<Future> initFutures = [];
+    for (var e in _filters) {
+      e.logger = this;
+      initFutures.add(e.init());
+    }
+    initFutures.add(_printer.init());
+    initFutures.add(_output.init());
+    _initialization = Future.wait(initFutures);
   }
 
   /// Future indicating if the initialization of the
@@ -71,7 +75,7 @@ class Logger {
   /// uses `async` in their `init` method.
   Future<void> get init => _initialization;
 
-  LogFilter get filter => _filter;
+  List<LogFilter> get filter => _filters;
 
   LogPrinter get printer => _printer;
 
@@ -192,7 +196,7 @@ class Logger {
       callback(logEvent);
     }
 
-    if (_filter.shouldLog(logEvent)) {
+    if (shouldLog(logEvent)) {
       if (message is Function) {
         logEvent = logEvent.copyWith(message: message());
       }
@@ -215,6 +219,17 @@ class Logger {
     }
   }
 
+  bool shouldLog(LogEvent event) {
+    for (var filter in _filters) {
+      var result = filter.shouldLog(event);
+      if (result != FilterResult.neutral) {
+        return result == FilterResult.accept;
+      }
+    }
+    // Fallback in case all filters return neutral.
+    return true;
+  }
+
   bool isClosed() {
     return !_active;
   }
@@ -222,7 +237,7 @@ class Logger {
   /// Closes the logger and releases all resources.
   Future<void> close() async {
     _active = false;
-    await _filter.destroy();
+    await Future.wait(_filters.map((e) => e.destroy()));
     await _printer.destroy();
     await _output.destroy();
   }
