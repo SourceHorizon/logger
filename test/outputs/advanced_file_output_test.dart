@@ -53,9 +53,9 @@ void main() {
     );
     await output.init();
 
-    final event0 = OutputEvent(LogEvent(Level.info, ""), ["First event"]);
-    final event1 = OutputEvent(LogEvent(Level.info, ""), ["Second event"]);
-    final event2 = OutputEvent(LogEvent(Level.info, ""), ["Third event"]);
+    final event0 = OutputEvent(LogEvent(Level.info, ""), "First event");
+    final event1 = OutputEvent(LogEvent(Level.info, ""), "Second event");
+    final event2 = OutputEvent(LogEvent(Level.info, ""), "Third event");
 
     output.output(event0);
     output.output(event1);
@@ -82,9 +82,9 @@ void main() {
     );
     await output.init();
 
-    final event0 = OutputEvent(LogEvent(Level.info, ""), ["First event"]);
-    final event1 = OutputEvent(LogEvent(Level.info, ""), ["Second event"]);
-    final event2 = OutputEvent(LogEvent(Level.info, ""), ["Third event"]);
+    final event0 = OutputEvent(LogEvent(Level.info, ""), "First event");
+    final event1 = OutputEvent(LogEvent(Level.info, ""), "Second event");
+    final event2 = OutputEvent(LogEvent(Level.info, ""), "Third event");
 
     output.output(event0);
     output.output(event1);
@@ -109,19 +109,19 @@ void main() {
       maxFileSizeKB: 1,
     );
     await output.init();
-    final event0 = OutputEvent(LogEvent(Level.fatal, ""), ["1" * 1500]);
+    final event0 = OutputEvent(LogEvent(Level.fatal, ""), "1" * 1500);
     output.output(event0);
     await output.destroy();
 
     // Start again to roll files on init without waiting for timer tick
     await output.init();
-    final event1 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 1500]);
+    final event1 = OutputEvent(LogEvent(Level.fatal, ""), "2" * 1500);
     output.output(event1);
     await output.destroy();
 
     // And again for another roll
     await output.init();
-    final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["3" * 1500]);
+    final event2 = OutputEvent(LogEvent(Level.fatal, ""), "3" * 1500);
     output.output(event2);
     await output.destroy();
 
@@ -140,19 +140,19 @@ void main() {
     );
 
     await output.init();
-    final event0 = OutputEvent(LogEvent(Level.fatal, ""), ["1" * 1500]);
+    final event0 = OutputEvent(LogEvent(Level.fatal, ""), "1" * 1500);
     output.output(event0);
     await output.destroy();
 
     // Start again to roll files on init without waiting for timer tick
     await output.init();
-    final event1 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 1500]);
+    final event1 = OutputEvent(LogEvent(Level.fatal, ""), "2" * 1500);
     output.output(event1);
     await output.destroy();
 
     // And again for another roll
     await output.init();
-    final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["3" * 1500]);
+    final event2 = OutputEvent(LogEvent(Level.fatal, ""), "3" * 1500);
     output.output(event2);
     await output.destroy();
 
@@ -183,7 +183,7 @@ void main() {
 
     await output.init();
     final event0 =
-        OutputEvent(LogEvent(Level.fatal, ""), ["Header and Footer Test"]);
+        OutputEvent(LogEvent(Level.fatal, ""), "Header and Footer Test");
     output.output(event0);
     await output.destroy();
 
@@ -207,20 +207,20 @@ void main() {
     );
 
     await output.init();
-    final event0 = OutputEvent(LogEvent(Level.fatal, ""), ["1" * 1500]);
+    final event0 = OutputEvent(LogEvent(Level.fatal, ""), "1" * 1500);
     output.output(event0);
     await output.destroy();
 
     // Start again to roll files on init without waiting for timer tick
     await output.init();
     // Create a second file with a greater length (it should be deleted first)
-    final event1 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 3000]);
+    final event1 = OutputEvent(LogEvent(Level.fatal, ""), "2" * 3000);
     output.output(event1);
     await output.destroy();
 
     // And again for another roll
     await output.init();
-    final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["3" * 1500]);
+    final event2 = OutputEvent(LogEvent(Level.fatal, ""), "3" * 1500);
     output.output(event2);
     await output.destroy();
 
@@ -241,8 +241,8 @@ void main() {
     var output = MemoryAdvancedFileOutput(path: dirName);
     await output.init();
 
-    final event0 = OutputEvent(LogEvent(Level.info, ""), ["Last event"]);
-    final event1 = OutputEvent(LogEvent(Level.info, ""), ["Very last event"]);
+    final event0 = OutputEvent(LogEvent(Level.info, ""), "Last event");
+    final event1 = OutputEvent(LogEvent(Level.info, ""), "Very last event");
 
     output.output(event0);
     output.output(event1);

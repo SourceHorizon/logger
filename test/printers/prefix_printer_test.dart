@@ -24,22 +24,22 @@ void main() {
   ];
 
   test('prefixes logs', () {
-    var printer = PrefixPrinter(PrettyPrinter());
-    var actualLog = printer.log(infoEvent);
-    for (var logString in actualLog) {
+    var printer = PrefixPrinter();
+    var actualLog = printer.log(infoEvent.message, infoEvent).toString();
+    for (var logString in actualLog.split(printer.separator)) {
       expect(logString, contains('INFO'));
     }
 
-    var debugLog = printer.log(debugEvent);
-    for (var logString in debugLog) {
+    var debugLog = printer.log(debugEvent.message, debugEvent).toString();
+    for (var logString in debugLog.split(printer.separator)) {
       expect(logString, contains('DEBUG'));
     }
   });
 
   test('can supply own prefixes', () {
-    var printer = PrefixPrinter(PrettyPrinter(), debug: 'BLAH');
-    var actualLog = printer.log(debugEvent);
-    for (var logString in actualLog) {
+    var printer = PrefixPrinter(debug: 'BLAH');
+    var actualLog = printer.log(debugEvent.message, debugEvent).toString();
+    for (var logString in actualLog.split(printer.separator)) {
       expect(logString, contains('BLAH'));
     }
   });
@@ -47,11 +47,22 @@ void main() {
   test('pads to same length', () {
     const longPrefix = 'EXTRALONGPREFIX';
     const len = longPrefix.length;
-    var printer = PrefixPrinter(SimplePrinter(), debug: longPrefix);
+    var printer = PrefixPrinter(debug: longPrefix);
     for (var event in allEvents) {
-      var l1 = printer.log(event);
-      for (var logString in l1) {
+      var l1 = printer.log(event.message, event).toString();
+      for (var logString in l1.split(printer.separator)) {
         expect(logString.substring(0, len), isNot(contains('[')));
+      }
+    }
+  });
+
+  test('uses global prefix', () {
+    const prefix = 'GLOBAL PREFIX';
+    var printer = PrefixPrinter(globalPrefix: prefix);
+    for (var event in allEvents) {
+      var l1 = printer.log(event.message, event).toString();
+      for (var logString in l1.split(printer.separator)) {
+        expect(logString, startsWith(prefix));
       }
     }
   });

@@ -15,10 +15,10 @@ void main() {
       SimplePrinter(colors: false, dateTimeFormat: DateTimeFormat.none);
 
   test('represent event on a single line (ignoring stacktrace)', () {
-    var outputs = plainPrinter.log(event);
+    var outputs = plainPrinter.log(event.message, event);
 
-    expect(outputs, hasLength(1));
-    expect(outputs[0], '[T]  some message  ERROR: some error');
+    expect(outputs, isNot(contains("\n")));
+    expect(outputs, '[T]  some message  ERROR: some error');
   });
 
   group('color', () {
@@ -27,26 +27,27 @@ void main() {
       // the ANSI control characters regardless for the test.
       var printer = SimplePrinter(colors: true);
 
-      expect(printer.log(event)[0], contains(ansiEscapeLiteral));
+      expect(printer.log(event.message, event), contains(ansiEscapeLiteral));
     });
 
     test('toggle color', () {
       var printer = SimplePrinter(colors: false);
 
-      expect(printer.log(event)[0], isNot(contains(ansiEscapeLiteral)));
+      expect(printer.log(event.message, event),
+          isNot(contains(ansiEscapeLiteral)));
     });
   });
 
   test('print time', () {
     var printer = SimplePrinter();
 
-    expect(printer.log(event)[0], contains('TIME'));
+    expect(printer.log(event.message, event), contains('TIME'));
   });
 
   test('does not print time', () {
     var printer = SimplePrinter(dateTimeFormat: DateTimeFormat.none);
 
-    expect(printer.log(event)[0], isNot(contains('TIME')));
+    expect(printer.log(event.message, event), isNot(contains('TIME')));
   });
 
   test('omits error when null', () {
@@ -56,21 +57,21 @@ void main() {
       error: null,
       stackTrace: StackTrace.current,
     );
-    var outputs = SimplePrinter().log(withoutError);
+    var outputs = SimplePrinter().log(withoutError.message, withoutError);
 
-    expect(outputs[0], isNot(contains('ERROR')));
+    expect(outputs, isNot(contains('ERROR')));
   });
 
   test('deal with Map type message', () {
     var withMap = LogEvent(
       Level.debug,
-      {'foo': 123},
+      plainPrinter.stringifyMessage({'foo': 123}),
       error: 'some error',
       stackTrace: StackTrace.current,
     );
 
     expect(
-      plainPrinter.log(withMap)[0],
+      plainPrinter.log(withMap.message, withMap),
       '[D]  {"foo":123}  ERROR: some error',
     );
   });
@@ -78,13 +79,13 @@ void main() {
   test('deal with Iterable type message', () {
     var withIterable = LogEvent(
       Level.debug,
-      [1, 2, 3, 4],
+      plainPrinter.stringifyMessage([1, 2, 3, 4]),
       error: 'some error',
       stackTrace: StackTrace.current,
     );
 
     expect(
-      plainPrinter.log(withIterable)[0],
+      plainPrinter.log(withIterable.message, withIterable),
       '[D]  [1,2,3,4]  ERROR: some error',
     );
   });

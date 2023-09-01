@@ -7,9 +7,9 @@ class TestLogPrinter extends LogPrinter {
   LogEvent? latestEvent;
 
   @override
-  List<String> log(LogEvent event) {
+  Object? log(Object? message, LogEvent event) {
     latestEvent = event;
-    return realPrinter.log(event);
+    return realPrinter.log(message, event);
   }
 }
 
@@ -29,14 +29,14 @@ void main() {
 
   var hybridPrinter = HybridPrinter(printerA, debug: printerB, error: printerC);
   test('uses wrapped printer by default', () {
-    hybridPrinter.log(infoEvent);
+    hybridPrinter.log(infoEvent.message, infoEvent);
     expect(printerA.latestEvent, equals(infoEvent));
   });
 
   test('forwards logs to correct logger', () {
-    hybridPrinter.log(debugEvent);
-    hybridPrinter.log(errorEvent);
-    hybridPrinter.log(warningEvent);
+    hybridPrinter.log(debugEvent.message, debugEvent);
+    hybridPrinter.log(errorEvent.message, errorEvent);
+    hybridPrinter.log(warningEvent.message, warningEvent);
     expect(printerA.latestEvent, equals(warningEvent));
     expect(printerB.latestEvent, equals(debugEvent));
     expect(printerC.latestEvent, equals(errorEvent));

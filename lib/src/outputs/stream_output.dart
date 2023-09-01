@@ -4,11 +4,11 @@ import '../log_output.dart';
 import '../output_event.dart';
 
 class StreamOutput extends LogOutput {
-  late StreamController<List<String>> _controller;
+  late StreamController<String> _controller;
   bool _shouldForward = false;
 
   StreamOutput() {
-    _controller = StreamController<List<String>>(
+    _controller = StreamController<String>(
       onListen: () => _shouldForward = true,
       onPause: () => _shouldForward = false,
       onResume: () => _shouldForward = true,
@@ -16,7 +16,7 @@ class StreamOutput extends LogOutput {
     );
   }
 
-  Stream<List<String>> get stream => _controller.stream;
+  Stream<String> get stream => _controller.stream;
 
   @override
   void output(OutputEvent event) {
@@ -24,7 +24,7 @@ class StreamOutput extends LogOutput {
       return;
     }
 
-    _controller.add(event.lines);
+    _controller.add(event.output);
   }
 
   @override

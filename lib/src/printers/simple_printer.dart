@@ -37,11 +37,11 @@ class SimplePrinter extends LogPrinter {
   });
 
   @override
-  List<String> log(LogEvent event) {
+  Object? log(Object? message, LogEvent event) {
     var messageStr = stringifyMessage(event.message);
     var errorStr = event.error != null ? '  ERROR: ${event.error}' : '';
     var timeStr = printTimestamp ? 'TIME: ${getTime(event.time)}' : '';
-    return ['${_labelFor(event.level)} $timeStr $messageStr$errorStr'];
+    return '${_labelFor(event.level)} $timeStr $messageStr$errorStr';
   }
 
   String _labelFor(Level level) {
