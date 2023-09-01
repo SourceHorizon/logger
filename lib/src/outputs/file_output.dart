@@ -27,7 +27,7 @@ class FileOutput extends LogOutput {
 
   @override
   void output(OutputEvent event) {
-    _sink?.writeAll(event.lines, '\n');
+    _sink?.write(event.output);
     _sink?.writeln();
   }
 

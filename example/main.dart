@@ -1,11 +1,11 @@
 import 'package:logger/logger.dart';
 
 var logger = Logger(
-  printer: PrettyPrinter(),
+  printers: [PrettyPrinter()],
 );
 
 var loggerNoStack = Logger(
-  printer: PrettyPrinter(methodCount: 0),
+  printers: [PrettyPrinter(methodCount: 0)],
 );
 
 void main() {
@@ -25,5 +25,10 @@ void demo() {
 
   loggerNoStack.t({'key': 5, 'value': 'something'});
 
-  Logger(printer: SimplePrinter(colors: true)).t('boom');
+  Logger(printers: [SimplePrinter(colors: true)]).t('boom');
+
+  Logger(printers: [
+    PrefixPrinter(),
+    PrettyPrinter(colors: true, printTime: true),
+  ]).w('This log has a prefix');
 }

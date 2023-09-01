@@ -21,10 +21,10 @@ class Logger {
   static LogFilter Function() defaultFilter = () => DevelopmentFilter();
 
   /// The current default implementation of log printer.
-  static LogPrinter Function() defaultPrinter = () => PrettyPrinter();
+  static List<LogPrinter> Function() defaultPrinters = () => [PrettyPrinter()];
 
   /// The current default implementation of log output.
-  static LogOutput Function() defaultOutput = () => ConsoleOutput();
+  static List<LogOutput> Function() defaultOutputs = () => [ConsoleOutput()];
 
   static final Set<LogCallback> _logCallbacks = {};
 
@@ -36,32 +36,42 @@ class Logger {
   Level level;
 
   final LogFilter _filter;
-  final LogPrinter _printer;
-  final LogOutput _output;
+  final List<LogPrinter> _printers;
+  final List<LogOutput> _outputs;
   bool _active = true;
 
   /// Create a new instance of Logger.
   ///
-  /// You can provide a custom [printer], [filter] and [output]. Otherwise the
+  /// You can provide a custom [filter], [printers] and [outputs]. Otherwise the
   /// defaults: [PrettyPrinter], [DevelopmentFilter] and [ConsoleOutput] will be
   /// used.
   Logger({
     Level? level,
     LogFilter? filter,
-    LogPrinter? printer,
-    LogOutput? output,
+    @Deprecated("Use [printers] instead.") LogPrinter? printer,
+    List<LogPrinter>? printers,
+    @Deprecated("Use [outputs] instead.") LogOutput? output,
+    List<LogOutput>? outputs,
   })  : level = level ?? defaultLevel,
         _filter = filter ?? defaultFilter(),
-        _printer = printer ?? defaultPrinter(),
-        _output = output ?? defaultOutput() {
-    _filter.logger = this;
-    _printer.logger = this;
-    _output.logger = this;
+        _printers =
+            printer != null ? [printer] : (printers ?? defaultPrinters()),
+        _outputs = output != null ? [output] : (outputs ?? defaultOutputs()) {
+    assert(_printers.isNotEmpty, "Printers cannot be empty");
+    assert(_outputs.isNotEmpty, "Outputs cannot be empty");
 
-    var filterInit = _filter.init();
-    var printerInit = _printer.init();
-    var outputInit = _output.init();
-    _initialization = Future.wait([filterInit, printerInit, outputInit]);
+    List<Future> initFutures = [];
+    initFutures.add(_filter.init());
+    _filter.logger = this;
+    for (var e in _printers) {
+      e.logger = this;
+      initFutures.add(e.init());
+    }
+    for (var e in _outputs) {
+      e.logger = this;
+      initFutures.add(e.init());
+    }
+    _initialization = Future.wait(initFutures);
   }
 
   /// Future indicating if the initialization of the
@@ -73,9 +83,9 @@ class Logger {
 
   LogFilter get filter => _filter;
 
-  LogPrinter get printer => _printer;
+  List<LogPrinter> get printer => List.unmodifiable(_printers);
 
-  LogOutput get output => _output;
+  List<LogOutput> get output => List.unmodifiable(_outputs);
 
   /// Log a message at level [Level.verbose].
   @Deprecated(
@@ -196,17 +206,24 @@ class Logger {
       if (message is Function) {
         logEvent = logEvent.copyWith(message: message());
       }
-      var output = _printer.log(logEvent);
 
-      if (output.isNotEmpty) {
-        var outputEvent = OutputEvent(logEvent, output);
+      Object? output = logEvent.message;
+      for (var p in _printers) {
+        output = p.log(output, logEvent);
+      }
+      String finalOutput = output.toString();
+
+      if (finalOutput.isNotEmpty) {
+        var outputEvent = OutputEvent(logEvent, finalOutput);
         // Issues with log output should NOT influence
         // the main software behavior.
         try {
           for (var callback in _outputCallbacks) {
             callback(outputEvent);
           }
-          _output.output(outputEvent);
+          for (var output in _outputs) {
+            output.output(outputEvent);
+          }
         } catch (e, s) {
           print(e);
           print(s);
@@ -223,8 +240,8 @@ class Logger {
   Future<void> close() async {
     _active = false;
     await _filter.destroy();
-    await _printer.destroy();
-    await _output.destroy();
+    await Future.wait(_printers.map((e) => e.destroy()));
+    await Future.wait(_outputs.map((e) => e.destroy()));
   }
 
   /// Register a [LogCallback] which is called for each new [LogEvent].

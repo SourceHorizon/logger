@@ -5,54 +5,59 @@ void main() {
   var printer = LogfmtPrinter();
 
   test('includes level', () {
+    var logEvent = LogEvent(
+      Level.debug,
+      'some message',
+      error: Exception('boom'),
+      stackTrace: StackTrace.current,
+    );
     expect(
-      printer.log(LogEvent(
-        Level.debug,
-        'some message',
-        error: Exception('boom'),
-        stackTrace: StackTrace.current,
-      ))[0],
+      printer.log(logEvent.message, logEvent),
       contains('level=debug'),
     );
   });
 
   test('with a string message includes a msg key', () {
+    var logEvent = LogEvent(
+      Level.debug,
+      'some message',
+      error: Exception('boom'),
+      stackTrace: StackTrace.current,
+    );
     expect(
-      printer.log(LogEvent(
-        Level.debug,
-        'some message',
-        error: Exception('boom'),
-        stackTrace: StackTrace.current,
-      ))[0],
+      printer.log(logEvent.message, logEvent),
       contains('msg="some message"'),
     );
   });
 
   test('includes random key=value pairs', () {
-    var output = printer.log(LogEvent(
+    var logEvent = LogEvent(
       Level.debug,
       {'a': 123, 'foo': 'bar baz'},
       error: Exception('boom'),
       stackTrace: StackTrace.current,
-    ))[0];
+    );
+    var output = printer.log(logEvent.message, logEvent);
 
     expect(output, contains('a=123'));
     expect(output, contains('foo="bar baz"'));
   });
 
   test('handles an error/exception', () {
-    var output = printer.log(LogEvent(
+    var logEvent = LogEvent(
       Level.debug,
       'some message',
       error: Exception('boom'),
       stackTrace: StackTrace.current,
-    ))[0];
+    );
+    var output = printer.log(logEvent.message, logEvent);
     expect(output, contains('error="Exception: boom"'));
 
-    output = printer.log(LogEvent(
+    var logEvent2 = LogEvent(
       Level.debug,
       'some message',
-    ))[0];
+    );
+    output = printer.log(logEvent2.message, logEvent2);
     expect(output, isNot(contains('error=')));
   });
 

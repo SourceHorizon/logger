@@ -129,8 +129,8 @@ A very basic printer could look like this:
 ```dart
 class MyPrinter extends LogPrinter {
   @override
-  List<String> log(LogEvent event) {
-    return [event.message];
+  Object? log(Object? message, LogEvent event) {
+    return message;
   }
 }
 ```

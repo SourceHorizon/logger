@@ -17,7 +17,6 @@ export 'src/outputs/console_output.dart';
 export 'src/outputs/file_output_stub.dart'
     if (dart.library.io) 'src/outputs/file_output.dart';
 export 'src/outputs/memory_output.dart';
-export 'src/outputs/multi_output.dart';
 export 'src/outputs/stream_output.dart';
 export 'src/printers/hybrid_printer.dart';
 export 'src/printers/logfmt_printer.dart';

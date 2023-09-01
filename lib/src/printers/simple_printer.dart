@@ -34,11 +34,11 @@ class SimplePrinter extends LogPrinter {
   SimplePrinter({this.printTime = false, this.colors = true});
 
   @override
-  List<String> log(LogEvent event) {
+  Object? log(Object? message, LogEvent event) {
     var messageStr = stringifyMessage(event.message);
     var errorStr = event.error != null ? '  ERROR: ${event.error}' : '';
     var timeStr = printTime ? 'TIME: ${event.time.toIso8601String()}' : '';
-    return ['${_labelFor(event.level)} $timeStr $messageStr$errorStr'];
+    return '${_labelFor(event.level)} $timeStr $messageStr$errorStr';
   }
 
   String _labelFor(Level level) {

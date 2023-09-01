@@ -219,8 +219,8 @@ class PrettyPrinter extends LogPrinter {
   }
 
   @override
-  List<String> log(LogEvent event) {
-    var messageStr = stringifyMessage(event.message);
+  Object? log(Object? message, LogEvent event) {
+    var messageStr = stringifyMessage(message);
 
     String? stackTraceStr;
     if (event.error != null) {
@@ -369,7 +369,7 @@ class PrettyPrinter extends LogPrinter {
     return '';
   }
 
-  List<String> _formatAndPrint(
+  String _formatAndPrint(
     Level level,
     String message,
     String? time,
@@ -406,6 +406,6 @@ class PrettyPrinter extends LogPrinter {
     }
     if (_includeBox[level]!) buffer.add(color(_bottomBorder));
 
-    return buffer;
+    return buffer.join("\n");
   }
 }

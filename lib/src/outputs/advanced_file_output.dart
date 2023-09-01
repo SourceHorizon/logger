@@ -144,7 +144,7 @@ class AdvancedFileOutput extends LogOutput {
   void _flushBuffer() {
     if (_sink == null) return; // Wait until _sink becomes available
     for (final event in _buffer) {
-      _sink?.writeAll(event.lines, Platform.isWindows ? '\r\n' : '\n');
+      _sink?.write(event.output);
       _sink?.writeln();
     }
     _buffer.clear();

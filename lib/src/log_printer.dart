@@ -17,7 +17,7 @@ abstract class LogPrinter {
 
   /// Is called every time a new [LogEvent] is sent and handles printing or
   /// storing the message.
-  List<String> log(LogEvent event);
+  Object? log(Object? message, LogEvent event);
 
   Future<void> destroy() async {}
 

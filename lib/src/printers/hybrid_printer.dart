@@ -38,6 +38,6 @@ class HybridPrinter extends LogPrinter {
         };
 
   @override
-  List<String> log(LogEvent event) =>
-      _printerMap[event.level]?.log(event) ?? [];
+  Object? log(Object? message, LogEvent event) =>
+      _printerMap[event.level]?.log(message, event) ?? "";
 }

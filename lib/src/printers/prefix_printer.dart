@@ -13,11 +13,13 @@ import '../log_printer.dart';
 /// Would prepend "DEBUG" to every line in a debug log. You can supply
 /// parameters for a custom message for a specific log level.
 class PrefixPrinter extends LogPrinter {
-  final LogPrinter _realPrinter;
+  final String separator;
+  final String? globalPrefix;
   late Map<Level, String> _prefixMap;
 
-  PrefixPrinter(
-    this._realPrinter, {
+  PrefixPrinter({
+    this.separator = "\n",
+    this.globalPrefix,
     String? debug,
     String? trace,
     @Deprecated('[verbose] is being deprecated in favor of [trace].') verbose,
@@ -37,13 +39,16 @@ class PrefixPrinter extends LogPrinter {
     };
 
     var len = _longestPrefixLength();
-    _prefixMap.forEach((k, v) => _prefixMap[k] = '${v.padLeft(len)} ');
+    _prefixMap.forEach((k, v) => _prefixMap[k] = v.padLeft(len));
   }
 
   @override
-  List<String> log(LogEvent event) {
-    var realLogs = _realPrinter.log(event);
-    return realLogs.map((s) => '${_prefixMap[event.level]}$s').toList();
+  Object? log(Object? message, LogEvent event) {
+    return message
+        .toString()
+        .split(separator)
+        .map((s) => '${globalPrefix ?? _prefixMap[event.level]} $s')
+        .join(separator);
   }
 
   int _longestPrefixLength() {

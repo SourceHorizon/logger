@@ -2,10 +2,6 @@ import 'package:logger/logger.dart';
 import 'package:test/test.dart';
 
 void main() {
-  String readMessage(List<String> log) {
-    return log.reduce((acc, val) => "$acc\n$val");
-  }
-
   test('should print an emoji when option is enabled', () {
     final expectedMessage = 'some message with an emoji';
     final emojiPrettyPrinter = PrettyPrinter(printEmojis: true);
@@ -17,11 +13,9 @@ void main() {
       stackTrace: StackTrace.current,
     );
 
-    final actualLog = emojiPrettyPrinter.log(event);
-    final actualLogString = readMessage(actualLog);
-    expect(actualLogString,
-        contains(PrettyPrinter.defaultLevelEmojis[Level.debug]));
-    expect(actualLogString, contains(expectedMessage));
+    final actualLog = emojiPrettyPrinter.log(event.message, event);
+    expect(actualLog, contains(PrettyPrinter.defaultLevelEmojis[Level.debug]));
+    expect(actualLog, contains(expectedMessage));
   });
 
   test('should print custom emoji or fallback', () {
@@ -39,9 +33,9 @@ void main() {
       error: 'some error',
       stackTrace: StackTrace.current,
     );
-    final emojiLogString = readMessage(emojiPrettyPrinter.log(firstEvent));
+    final emojiLog = emojiPrettyPrinter.log(firstEvent.message, firstEvent);
     expect(
-      emojiLogString,
+      emojiLog,
       contains(
           '${emojiPrettyPrinter.levelEmojis![Level.debug]!} $expectedMessage'),
     );
@@ -52,10 +46,10 @@ void main() {
       error: 'some error',
       stackTrace: StackTrace.current,
     );
-    final fallbackEmojiLogString =
-        readMessage(emojiPrettyPrinter.log(secondEvent));
+    final fallbackEmojiLog =
+        emojiPrettyPrinter.log(secondEvent.message, secondEvent);
     expect(
-      fallbackEmojiLogString,
+      fallbackEmojiLog,
       contains(
           '${PrettyPrinter.defaultLevelEmojis[Level.info]!} $expectedMessage'),
     );
@@ -76,10 +70,10 @@ void main() {
       error: 'some error',
       stackTrace: StackTrace.current,
     );
-    final coloredLogString = readMessage(coloredPrettyPrinter.log(firstEvent));
-    expect(coloredLogString, contains(expectedMessage));
+    final coloredLog = coloredPrettyPrinter.log(firstEvent.message, firstEvent);
+    expect(coloredLog, contains(expectedMessage));
     expect(
-      coloredLogString,
+      coloredLog,
       startsWith(coloredPrettyPrinter.levelColors![Level.debug]!.toString()),
     );
 
@@ -89,11 +83,11 @@ void main() {
       error: 'some error',
       stackTrace: StackTrace.current,
     );
-    final fallbackColoredLogString =
-        readMessage(coloredPrettyPrinter.log(secondEvent));
-    expect(fallbackColoredLogString, contains(expectedMessage));
+    final fallbackColoredLog =
+        coloredPrettyPrinter.log(secondEvent.message, secondEvent);
+    expect(fallbackColoredLog, contains(expectedMessage));
     expect(
-      fallbackColoredLogString,
+      fallbackColoredLog,
       startsWith(PrettyPrinter.defaultLevelColors[Level.info]!.toString()),
     );
   });
@@ -108,11 +102,9 @@ void main() {
       stackTrace: StackTrace.current,
     );
 
-    final actualLog = prettyPrinter.log(withFunction);
-    final actualLogString = readMessage(actualLog);
-
+    final actualLog = prettyPrinter.log(withFunction.message, withFunction);
     expect(
-      actualLogString,
+      actualLog,
       contains(expectedMessage),
     );
   });
@@ -122,16 +114,15 @@ void main() {
     final expectedMsgMap = {'foo': 123, 1: 2, true: 'false'};
     var withMap = LogEvent(
       Level.debug,
-      expectedMsgMap,
+      prettyPrinter.stringifyMessage(expectedMsgMap),
       error: 'some error',
       stackTrace: StackTrace.current,
     );
 
-    final actualLog = prettyPrinter.log(withMap);
-    final actualLogString = readMessage(actualLog);
+    final actualLog = prettyPrinter.log(withMap.message, withMap);
     for (var expectedMsg in expectedMsgMap.entries) {
       expect(
-        actualLogString,
+        actualLog,
         contains('${expectedMsg.key}: ${expectedMsg.value}'),
       );
     }
@@ -142,15 +133,15 @@ void main() {
     final expectedMsgItems = ['first', 'second', 'third', 'last'];
     var withIterable = LogEvent(
       Level.debug,
-      ['first', 'second', 'third', 'last'],
+      prettyPrinter.stringifyMessage(['first', 'second', 'third', 'last']),
       error: 'some error',
       stackTrace: StackTrace.current,
     );
-    final actualLog = prettyPrinter.log(withIterable);
-    final actualLogString = readMessage(actualLog);
+
+    final actualLog = prettyPrinter.log(withIterable.message, withIterable);
     for (var expectedMsg in expectedMsgItems) {
       expect(
-        actualLogString,
+        actualLog,
         contains(expectedMsg),
       );
     }
@@ -167,11 +158,9 @@ void main() {
       stackTrace: StackTrace.current,
     );
 
-    final actualLog = prettyPrinter.log(withFunction);
-    final actualLogString = readMessage(actualLog);
-
+    final actualLog = prettyPrinter.log(withFunction.message, withFunction);
     expect(
-      actualLogString,
+      actualLog,
       allOf([
         isNot(contains("#0   ")),
         isNot(contains("#1   ")),
