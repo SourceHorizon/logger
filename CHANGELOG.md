@@ -1,3 +1,8 @@
+## 2.0.2
+
+- Moved the default log level assignment to prevent weird lazy initialization bugs.
+  Mitigates [#38](https://github.com/Bungeefan/logger/issues/38).
+
 ## 2.0.1
 
 - Updated README to reflect v2.0.0 log signature change.
