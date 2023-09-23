@@ -1,11 +1,11 @@
 # Logger
 
 [![pub package](https://img.shields.io/pub/v/logger.svg?logo=dart&logoColor=00b9fc)](https://pub.dartlang.org/packages/logger)
-[![CI](https://img.shields.io/github/actions/workflow/status/Bungeefan/logger/dart.yml?branch=master&logo=github-actions&logoColor=white)](https://github.com/Bungeefan/logger/actions)
-[![Last Commits](https://img.shields.io/github/last-commit/Bungeefan/logger?logo=git&logoColor=white)](https://github.com/Bungeefan/logger/commits/master)
+git[![CI](https://img.shields.io/github/actions/workflow/status/Bungeefan/logger/dart.yml?branch=main&logo=github-actions&logoColor=white)](https://github.com/Bungeefan/logger/actions)
+[![Last Commits](https://img.shields.io/github/last-commit/Bungeefan/logger?logo=git&logoColor=white)](https://github.com/Bungeefan/logger/commits/main)
 [![Pull Requests](https://img.shields.io/github/issues-pr/Bungeefan/logger?logo=github&logoColor=white)](https://github.com/Bungeefan/logger/pulls)
 [![Code size](https://img.shields.io/github/languages/code-size/Bungeefan/logger?logo=github&logoColor=white)](https://github.com/Bungeefan/logger)
-[![License](https://img.shields.io/github/license/Bungeefan/logger?logo=open-source-initiative&logoColor=green)](https://github.com/Bungeefan/logger/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/Bungeefan/logger?logo=open-source-initiative&logoColor=green)](https://github.com/Bungeefan/logger/blob/main/LICENSE)
 
 Small, easy to use and extensible logger which prints beautiful logs.<br>
 Inspired by [logger](https://github.com/orhanobut/logger) for Android.
@@ -32,7 +32,7 @@ Instead of a string message, you can also pass other objects like `List`, `Map` 
 
 ## Output
 
-![](https://raw.githubusercontent.com/Bungeefan/logger/master/art/screenshot.png)
+![](https://raw.githubusercontent.com/Bungeefan/logger/main/art/screenshot.png)
 
 # Documentation
 
