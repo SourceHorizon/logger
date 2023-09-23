@@ -1,3 +1,7 @@
+## 2.0.2+1
+
+* Meta update: Updated repository links to https://github.com/SourceHorizon/logger.
+
 ## 2.0.2
 
 - Moved the default log level assignment to prevent weird lazy initialization bugs.
