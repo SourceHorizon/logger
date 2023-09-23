@@ -1,7 +1,7 @@
 name: logger
 description: Small, easy to use and extensible logger which prints beautiful logs.
 version: 2.0.2
-repository: https://github.com/Bungeefan/logger
+repository: https://github.com/SourceHorizon/logger
 
 environment:
   sdk: ">=2.17.0 <4.0.0"

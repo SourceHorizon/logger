@@ -1,11 +1,11 @@
 # Logger
 
 [![pub package](https://img.shields.io/pub/v/logger.svg?logo=dart&logoColor=00b9fc)](https://pub.dartlang.org/packages/logger)
-git[![CI](https://img.shields.io/github/actions/workflow/status/Bungeefan/logger/dart.yml?branch=main&logo=github-actions&logoColor=white)](https://github.com/Bungeefan/logger/actions)
-[![Last Commits](https://img.shields.io/github/last-commit/Bungeefan/logger?logo=git&logoColor=white)](https://github.com/Bungeefan/logger/commits/main)
-[![Pull Requests](https://img.shields.io/github/issues-pr/Bungeefan/logger?logo=github&logoColor=white)](https://github.com/Bungeefan/logger/pulls)
-[![Code size](https://img.shields.io/github/languages/code-size/Bungeefan/logger?logo=github&logoColor=white)](https://github.com/Bungeefan/logger)
-[![License](https://img.shields.io/github/license/Bungeefan/logger?logo=open-source-initiative&logoColor=green)](https://github.com/Bungeefan/logger/blob/main/LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/SourceHorizon/logger/dart.yml?branch=main&logo=github-actions&logoColor=white)](https://github.com/SourceHorizon/logger/actions)
+[![Last Commits](https://img.shields.io/github/last-commit/SourceHorizon/logger?logo=git&logoColor=white)](https://github.com/SourceHorizon/logger/commits/main)
+[![Pull Requests](https://img.shields.io/github/issues-pr/SourceHorizon/logger?logo=github&logoColor=white)](https://github.com/SourceHorizon/logger/pulls)
+[![Code size](https://img.shields.io/github/languages/code-size/SourceHorizon/logger?logo=github&logoColor=white)](https://github.com/SourceHorizon/logger)
+[![License](https://img.shields.io/github/license/SourceHorizon/logger?logo=open-source-initiative&logoColor=green)](https://github.com/SourceHorizon/logger/blob/main/LICENSE)
 
 Small, easy to use and extensible logger which prints beautiful logs.<br>
 Inspired by [logger](https://github.com/orhanobut/logger) for Android.
@@ -16,7 +16,7 @@ Inspired by [logger](https://github.com/orhanobut/logger) for Android.
 
 - [Documentation](https://pub.dev/documentation/logger/latest/logger/logger-library.html)
 - [Pub Package](https://pub.dev/packages/logger)
-- [GitHub Repository](https://github.com/Bungeefan/logger)
+- [GitHub Repository](https://github.com/SourceHorizon/logger)
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ Instead of a string message, you can also pass other objects like `List`, `Map` 
 
 ## Output
 
-![](https://raw.githubusercontent.com/Bungeefan/logger/main/art/screenshot.png)
+![](https://raw.githubusercontent.com/SourceHorizon/logger/main/art/screenshot.png)
 
 # Documentation
 

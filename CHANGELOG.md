@@ -1,7 +1,7 @@
 ## 2.0.2
 
 - Moved the default log level assignment to prevent weird lazy initialization bugs.
-  Mitigates [#38](https://github.com/Bungeefan/logger/issues/38).
+  Mitigates [#38](https://github.com/SourceHorizon/logger/issues/38).
 
 ## 2.0.1
 
@@ -11,9 +11,9 @@
 
 - Fixed supported platforms list.
 - Removed reference to outdated `logger_flutter` project.
-  Thanks to @yangsfang ([#32](https://github.com/Bungeefan/logger/pull/32)).
+  Thanks to @yangsfang ([#32](https://github.com/SourceHorizon/logger/pull/32)).
 - Added override capability for logger defaults.
-  Thanks to @yangsfang ([#34](https://github.com/Bungeefan/logger/pull/34)).
+  Thanks to @yangsfang ([#34](https://github.com/SourceHorizon/logger/pull/34)).
 - `Level.verbose`, `Level.wtf` and `Level.nothing` have been deprecated and are replaced
   by `Level.trace`, `Level.fatal` and `Level.off`.
   Additionally `Level.all` has been added.
@@ -69,12 +69,12 @@
 ## 1.2.2
 
 - Fixed conditional LogOutput export. Credits to
-  @ChristopheOosterlynck [#4](https://github.com/Bungeefan/logger/pull/4).
+  @ChristopheOosterlynck [#4](https://github.com/SourceHorizon/logger/pull/4).
 
 ## 1.2.1
 
 - Reverted `${this}` interpolation and added linter
-  ignore. [#1](https://github.com/Bungeefan/logger/issues/1)
+  ignore. [#1](https://github.com/SourceHorizon/logger/issues/1)
 
 ## 1.2.0
 
