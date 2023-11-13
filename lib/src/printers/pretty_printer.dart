@@ -62,7 +62,7 @@ class PrettyPrinter extends LogPrinter {
   /// * dart:sdk_internal
   /// * package:logger/src/logger.dart
   static final _browserStackTraceRegex =
-      RegExp(r'^(?:package:)?(dart:\S+|\S+)');
+  RegExp(r'^(?:package:)?(dart:\S+|\S+)');
 
   static DateTime? _startTime;
 
@@ -260,16 +260,16 @@ class PrettyPrinter extends LogPrinter {
         .split('\n')
         .where(
           (line) =>
-              !_discardDeviceStacktraceLine(line) &&
-              !_discardWebStacktraceLine(line) &&
-              !_discardBrowserStacktraceLine(line) &&
-              line.isNotEmpty,
-        )
+      !_discardDeviceStacktraceLine(line) &&
+          !_discardWebStacktraceLine(line) &&
+          !_discardBrowserStacktraceLine(line) &&
+          line.isNotEmpty,
+    )
         .toList();
     List<String> formatted = [];
 
     int stackTraceLength =
-        (methodCount != null ? min(lines.length, methodCount) : lines.length);
+    (methodCount != null ? min(lines.length, methodCount) : lines.length);
     for (int count = 0; count < stackTraceLength; count++) {
       var line = lines[count];
       if (count < stackTraceBeginIndex) {
@@ -344,12 +344,15 @@ class PrettyPrinter extends LogPrinter {
     }
 
     var now = time;
+    var year = now.year;
+    var month = twoDigits(now.month);
+    var day = twoDigits(now.day);
     var h = twoDigits(now.hour);
     var min = twoDigits(now.minute);
     var sec = twoDigits(now.second);
     var ms = threeDigits(now.millisecond);
     var timeSinceStart = now.difference(_startTime!).toString();
-    return '$h:$min:$sec.$ms (+$timeSinceStart)';
+    return '【$year-$month-$day $h:$min:$sec.$ms (+$timeSinceStart)】';
   }
 
   // Handles any object that is causing JsonEncoder() problems
@@ -385,13 +388,11 @@ class PrettyPrinter extends LogPrinter {
     return '';
   }
 
-  List<String> _formatAndPrint(
-    Level level,
-    String message,
-    String? time,
-    String? error,
-    String? stacktrace,
-  ) {
+  List<String> _formatAndPrint(Level level,
+      String message,
+      String? time,
+      String? error,
+      String? stacktrace,) {
     List<String> buffer = [];
     var verticalLineAtLevel = (_includeBox[level]!) ? ('$verticalLine ') : '';
     var color = _getLevelColor(level);
