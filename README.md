@@ -103,7 +103,7 @@ import `io`, for example when using this library on the web.
 
 The `LogFilter` decides which log events should be shown and which don't.<br>
 The default implementation (`DevelopmentFilter`) shows all logs with `level >= Logger.level` while
-in debug mode.
+in debug mode (i.e., running dart with `--enable-asserts`).
 In release mode all logs are omitted.
 
 You can create your own `LogFilter` like this:
