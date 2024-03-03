@@ -14,7 +14,7 @@ void main() {
   });
 
   test('Real file read and write', () async {
-    var output = FileOutput(file: file);
+    var output = FileOutput(path: file.path);
     await output.init();
 
     final event0 = OutputEvent(LogEvent(Level.info, ""), ["First event"]);
