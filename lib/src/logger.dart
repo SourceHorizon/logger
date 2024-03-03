@@ -32,6 +32,7 @@ class Logger {
 
   static final Set<OutputCallback> _outputCallbacks = {};
 
+  late final Future<void> _initialization;
   final LogFilter _filter;
   final LogPrinter _printer;
   final LogOutput _output;
@@ -50,13 +51,21 @@ class Logger {
   })  : _filter = filter ?? defaultFilter(),
         _printer = printer ?? defaultPrinter(),
         _output = output ?? defaultOutput() {
-    _filter.init();
+    var filterInit = _filter.init();
     if (level != null) {
       _filter.level = level;
     }
-    _printer.init();
-    _output.init();
+    var printerInit = _printer.init();
+    var outputInit = _output.init();
+    _initialization = Future.wait([filterInit, printerInit, outputInit]);
   }
+
+  /// Future indicating if the initialization of the
+  /// logger components (filter, printer and output) has been finished.
+  ///
+  /// This is only necessary if your [LogFilter]/[LogPrinter]/[LogOutput]
+  /// uses `async` in their `init` method.
+  Future<void> get init => _initialization;
 
   /// Log a message at level [Level.verbose].
   @Deprecated(

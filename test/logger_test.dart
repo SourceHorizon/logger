@@ -36,6 +36,56 @@ class _CallbackPrinter extends LogPrinter {
   }
 }
 
+class _AsyncFilter extends LogFilter {
+  final Duration delay;
+  bool initialized = false;
+
+  _AsyncFilter(this.delay);
+
+  @override
+  Future<void> init() async {
+    await Future.delayed(delay);
+    initialized = true;
+  }
+
+  @override
+  bool shouldLog(LogEvent event) => false;
+}
+
+class _AsyncPrinter extends LogPrinter {
+  final Duration delay;
+  bool initialized = false;
+
+  _AsyncPrinter(this.delay);
+
+  @override
+  Future<void> init() async {
+    await Future.delayed(delay);
+    initialized = true;
+  }
+
+  @override
+  List<String> log(LogEvent event) => [event.message.toString()];
+}
+
+class _AsyncOutput extends LogOutput {
+  final Duration delay;
+  bool initialized = false;
+
+  _AsyncOutput(this.delay);
+
+  @override
+  Future<void> init() async {
+    await Future.delayed(delay);
+    initialized = true;
+  }
+
+  @override
+  void output(OutputEvent event) {
+    // No-op.
+  }
+}
+
 /// Test class for the lazy-initialization of variables.
 class LazyLogger {
   static bool? printed;
@@ -234,5 +284,44 @@ void main() {
     LazyLogger.filter.level = Level.warning;
     LazyLogger.logger.i("This is an info message and should not show");
     expect(LazyLogger.printed, isNull);
+  });
+
+  test('Async Filter Initialization', () async {
+    var comp = _AsyncFilter(const Duration(milliseconds: 100));
+    var logger = Logger(
+      filter: comp,
+    );
+
+    expect(comp.initialized, false);
+    await Future.delayed(const Duration(milliseconds: 50));
+    expect(comp.initialized, false);
+    await logger.init;
+    expect(comp.initialized, true);
+  });
+
+  test('Async Printer Initialization', () async {
+    var comp = _AsyncPrinter(const Duration(milliseconds: 100));
+    var logger = Logger(
+      printer: comp,
+    );
+
+    expect(comp.initialized, false);
+    await Future.delayed(const Duration(milliseconds: 50));
+    expect(comp.initialized, false);
+    await logger.init;
+    expect(comp.initialized, true);
+  });
+
+  test('Async Output Initialization', () async {
+    var comp = _AsyncOutput(const Duration(milliseconds: 100));
+    var logger = Logger(
+      output: comp,
+    );
+
+    expect(comp.initialized, false);
+    await Future.delayed(const Duration(milliseconds: 50));
+    expect(comp.initialized, false);
+    await logger.init;
+    expect(comp.initialized, true);
   });
 }
