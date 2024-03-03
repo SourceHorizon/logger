@@ -1,6 +1,14 @@
+## 2.1.0
+
+- Improved README explanation about debug mode. Thanks to
+  @gkuga ([#57](https://github.com/SourceHorizon/logger/pull/57)).
+- Added web safe export. Fixes [#58](https://github.com/SourceHorizon/logger/issues/58).
+- Added `logger.init` to optionally await any `async` `init()` methods.
+  Fixes [#61](https://github.com/SourceHorizon/logger/issues/61).
+
 ## 2.0.2+1
 
-* Meta update: Updated repository links to https://github.com/SourceHorizon/logger.
+- Meta update: Updated repository links to https://github.com/SourceHorizon/logger.
 
 ## 2.0.2
 
