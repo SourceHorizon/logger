@@ -12,10 +12,10 @@ class FileOutput extends LogOutput {
   IOSink? _sink;
 
   FileOutput({
-    required this.file,
+    required String path,
     this.overrideExisting = false,
     this.encoding = utf8,
-  });
+  }) : file = File(path);
 
   @override
   Future<void> init() async {

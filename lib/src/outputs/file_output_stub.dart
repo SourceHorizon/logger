@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 
 import '../log_output.dart';
 import '../output_event.dart';
 
+/// Writes the log output to a file.
 class FileOutput extends LogOutput {
   FileOutput({
-    required File file,
+    required String path,
     bool overrideExisting = false,
     Encoding encoding = utf8,
   }) {
