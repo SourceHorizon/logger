@@ -108,9 +108,9 @@ class AdvancedFileOutput extends LogOutput {
         '${t.year}-${t.month.twoDigits}-${t.day.twoDigits}_${t.hour.twoDigits}-${t.minute.twoDigits}-${t.second.twoDigits}-${t.millisecond.threeDigits}';
     if (_targetFile == null) {
       // just create a new file on first boot
-      await _openFile(File('${directory!.path}/$newName-init.txt'));
+      await _openFile(File('${directory!.path}/${newName}_init.txt'));
     } else {
-      final proposed = File('${directory!.path}/$newName-next.txt');
+      final proposed = File('${directory!.path}/${newName}_next.txt');
       try {
         if (await _targetFile!.length() > maxLogFileSizeMB * 1000000) {
           await _closeCurrentFile();
