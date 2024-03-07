@@ -6,6 +6,11 @@ import '../log_level.dart';
 import '../log_output.dart';
 import '../output_event.dart';
 
+extension _NumExt on num {
+  String get twoDigits => toString().padLeft(2, '0');
+  String get threeDigits => toString().padLeft(3, '0');
+}
+
 /// Writes the log output to a file.
 class AdvancedFileOutput extends LogOutput {
   AdvancedFileOutput({
@@ -98,7 +103,9 @@ class AdvancedFileOutput extends LogOutput {
       return;
     }
 
-    final newName = DateTime.now().toString();
+    final t = DateTime.now();
+    final newName =
+        '${t.year}-${t.month.twoDigits}-${t.day.twoDigits}_${t.hour.twoDigits}-${t.minute.twoDigits}-${t.second.twoDigits}-${t.millisecond.threeDigits}';
     if (_targetFile == null) {
       // just create a new file on first boot
       await _openFile(File('${directory!.path}/$newName-init.txt'));
