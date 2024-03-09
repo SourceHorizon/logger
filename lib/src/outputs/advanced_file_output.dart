@@ -7,36 +7,40 @@ import '../log_output.dart';
 import '../output_event.dart';
 
 extension _NumExt on num {
-  String get twoDigits => toString().padLeft(2, '0');
-  String get threeDigits => toString().padLeft(3, '0');
+  String toDigits(int digits) => toString().padLeft(digits, '0');
 }
 
-/// Writes the log output to a file.
+/// AdvancedFileOutput allows accumulating logs in a temporary buffer for
+/// a short period [maxDelay] of time before writing them out to a file,
+/// resuling in less frequent writes. [writeImmediately] list contains
+/// the log levels that are written out immediately ([Level.warning],
+/// [Level.error] and [Level.fatal] by default).
+///
+/// It also has a [rotatingFilesMode] (enabled by default) that allows
+/// automatically creating new log files on each [AdvancedFileOutput] init
+/// or when the [maxLogFileSizeMB] is reached. Set [maxLogFileSizeMB] to 0
+/// to disable this behaviour and treat [path] as a particular file path
+/// rather than a directory for auto-created logs.
 class AdvancedFileOutput extends LogOutput {
   AdvancedFileOutput({
-    this.directory,
-    this.file,
+    required this.path,
     this.overrideExisting = false,
     this.encoding = utf8,
     List<Level>? writeImmediately,
     this.maxDelay = const Duration(seconds: 2),
     this.maxBufferSize = 2000,
     this.maxLogFileSizeMB = 1,
-  })  : writeImmediately = writeImmediately ??
+  }) : writeImmediately = writeImmediately ??
             [
               Level.error,
               Level.fatal,
               Level.warning,
               // ignore: deprecated_member_use_from_same_package
               Level.wtf,
-            ],
-        assert(
-          (file != null ? 1 : 0) + (directory != null ? 1 : 0) == 1,
-          'Either file or directory must be set',
-        );
+            ];
 
-  final File? file;
-  final Directory? directory;
+  /// Logs directory path by default, particular log file path if [maxLogFileSizeMB] is 0
+  final String path;
 
   final bool overrideExisting;
   final Encoding encoding;
@@ -53,16 +57,17 @@ class AdvancedFileOutput extends LogOutput {
 
   final List<OutputEvent> _buffer = [];
 
-  bool get dynamicFilesMode => directory != null;
+  bool get rotatingFilesMode => maxLogFileSizeMB > 0;
   File? get targetFile => _targetFile;
 
   @override
   Future<void> init() async {
-    if (dynamicFilesMode) {
+    if (rotatingFilesMode) {
+      final dir = Directory(path);
       //we use sync directory check to avoid losing
       //potential initial boot logs in early crash scenarios
-      if (!directory!.existsSync()) {
-        directory!.createSync(recursive: true);
+      if (!dir.existsSync()) {
+        dir.createSync(recursive: true);
       }
 
       _targetFileUpdater = Timer.periodic(
@@ -99,19 +104,19 @@ class AdvancedFileOutput extends LogOutput {
   }
 
   Future<void> _updateTargetFile() async {
-    if (!dynamicFilesMode) {
-      await _openFile(file!);
+    if (!rotatingFilesMode) {
+      await _openFile(File(path));
       return;
     }
 
     final t = DateTime.now();
     final newName =
-        '${t.year}-${t.month.twoDigits}-${t.day.twoDigits}_${t.hour.twoDigits}-${t.minute.twoDigits}-${t.second.twoDigits}-${t.millisecond.threeDigits}';
+        '${t.year}-${t.month.toDigits(2)}-${t.day.toDigits(2)}_${t.hour.toDigits(2)}-${t.minute.toDigits(2)}-${t.second.toDigits(2)}-${t.millisecond.toDigits(3)}';
     if (_targetFile == null) {
       // just create a new file on first boot
-      await _openFile(File('${directory!.path}/${newName}_init.txt'));
+      await _openFile(File('$path/${newName}_init.txt'));
     } else {
-      final proposed = File('${directory!.path}/${newName}_next.txt');
+      final proposed = File('$path/${newName}_next.txt');
       try {
         if (await _targetFile!.length() > maxLogFileSizeMB * 1000000) {
           await _closeCurrentFile();
@@ -127,7 +132,7 @@ class AdvancedFileOutput extends LogOutput {
 
   Future<void> _openFile(File proposed) async {
     _targetFile = proposed;
-    _sink = _targetFile?.openWrite(
+    _sink = _targetFile!.openWrite(
       mode: overrideExisting ? FileMode.writeOnly : FileMode.writeOnlyAppend,
       encoding: encoding,
     );
@@ -144,5 +149,6 @@ class AdvancedFileOutput extends LogOutput {
     _bufferWriteTimer?.cancel();
     _targetFileUpdater?.cancel();
     await _closeCurrentFile();
+    _buffer.clear();
   }
 }

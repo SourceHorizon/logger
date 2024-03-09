@@ -18,8 +18,9 @@ void main() {
 
   test('Real file read and write with buffer accumulation', () async {
     var output = AdvancedFileOutput(
-      file: file,
+      path: file.path,
       maxDelay: const Duration(milliseconds: 500),
+      maxLogFileSizeMB: 0,
     );
     await output.init();
 
@@ -50,7 +51,7 @@ void main() {
   test('Real file read and write with dynamic file names and immediate output',
       () async {
     var output = AdvancedFileOutput(
-      directory: dir,
+      path: dir.path,
       writeImmediately: [Level.info],
     );
     await output.init();
