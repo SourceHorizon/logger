@@ -30,14 +30,16 @@ class AdvancedFileOutput extends LogOutput {
     Duration maxDelay = const Duration(seconds: 2),
     int maxBufferSize = 2000,
     int maxLogFileSizeMB = 1,
-    String Function(DateTime, {required bool isLatest})? fileNameFormatter,
+    String initialFileName = 'latest.log',
+    String Function(DateTime timestamp)? fileNameFormatter,
   })  : _path = path,
         _overrideExisting = overrideExisting,
         _encoding = encoding,
         _maxDelay = maxDelay,
         _maxLogFileSizeMB = maxLogFileSizeMB,
         _maxBufferSize = maxBufferSize,
-        _fileNameFormatter = fileNameFormatter,
+        _initialFileName = initialFileName,
+        _fileNameFormatter = fileNameFormatter ?? _defaultFileNameFormat,
         _writeImmediately = writeImmediately ??
             [
               Level.error,
@@ -57,8 +59,8 @@ class AdvancedFileOutput extends LogOutput {
   final Duration _maxDelay;
   final int _maxLogFileSizeMB;
   final int _maxBufferSize;
-  final String Function(DateTime timestamp, {required bool isLatest})?
-      _fileNameFormatter;
+  final String _initialFileName;
+  final String Function(DateTime timestamp) _fileNameFormatter;
 
   IOSink? _sink;
   File? _targetFile;
@@ -68,7 +70,18 @@ class AdvancedFileOutput extends LogOutput {
   final List<OutputEvent> _buffer = [];
 
   bool get _rotatingFilesMode => _maxLogFileSizeMB > 0;
+
   File? get currentFile => _targetFile;
+
+  /// Formats the file with a full date string.
+  ///
+  /// Example:
+  /// * `2024-01-01-10-05-02-123.log`
+  static String _defaultFileNameFormat(DateTime t) {
+    return '${t.year}-${t.month.toDigits(2)}-${t.day.toDigits(2)}'
+        '-${t.hour.toDigits(2)}-${t.minute.toDigits(2)}-${t.second.toDigits(2)}'
+        '-${t.millisecond.toDigits(3)}.log';
+  }
 
   @override
   Future<void> init() async {
@@ -115,11 +128,11 @@ class AdvancedFileOutput extends LogOutput {
 
   Future<void> _updateTargetFile() async {
     if (_targetFile == null) {
-      //if logger wasn't destroyed properly, there may be a latest.log file from the previous
+      //if logger wasn't destroyed properly, there may be a initial log file from the previous
       //session. we do this check to detect it and rename it to avoid overwriting
-      final prev = File('$_path/${_genFileName(isLatest: true)}');
+      final prev = File('$_path/${_getFileName(newFile: true)}');
       if (_rotatingFilesMode && await prev.exists()) {
-        await prev.rename('$_path/${_genFileName(isLatest: false)}.lost');
+        await prev.rename('$_path/${_getFileName()}.lost');
       }
 
       // just create a new file on first boot
@@ -142,7 +155,7 @@ class AdvancedFileOutput extends LogOutput {
 
   Future<void> _openNewFile() async {
     _targetFile = File(
-        _rotatingFilesMode ? '$_path/${_genFileName(isLatest: true)}' : _path);
+        _rotatingFilesMode ? '$_path/${_getFileName(newFile: true)}' : _path);
     _sink = _targetFile!.openWrite(
       mode: _overrideExisting ? FileMode.writeOnly : FileMode.writeOnlyAppend,
       encoding: _encoding,
@@ -154,21 +167,12 @@ class AdvancedFileOutput extends LogOutput {
     await _sink?.close();
     _sink = null; //explicitly make null until assigned again
     if (_rotatingFilesMode) {
-      await _targetFile?.rename('$_path/${_genFileName(isLatest: false)}');
+      await _targetFile?.rename('$_path/${_getFileName()}');
     }
   }
 
-  String _genFileName({required bool isLatest}) {
-    final t = DateTime.now();
-    if (_fileNameFormatter != null) {
-      return _fileNameFormatter!(t, isLatest: isLatest);
-    } else {
-      if (isLatest) {
-        return 'latest.log';
-      } else {
-        return '${t.year}-${t.month.toDigits(2)}-${t.day.toDigits(2)}-${t.hour.toDigits(2)}-${t.minute.toDigits(2)}-${t.second.toDigits(2)}-${t.millisecond.toDigits(3)}.log';
-      }
-    }
+  String _getFileName({bool newFile = false}) {
+    return newFile ? _initialFileName : _fileNameFormatter(DateTime.now());
   }
 
   @override
