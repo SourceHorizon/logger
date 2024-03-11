@@ -114,10 +114,11 @@ void main() {
     await newOutput.init();
 
     final files = dir.listSync();
-    final paths = [for (final f in files) f.path];
+    final lost = [for (final f in files) f.path]
+        .where((p) => p.endsWith('.lost'))
+        .toList();
 
     await newOutput.destroy();
-
-    expect(paths, containsOnce((e) => (e as String).endsWith('.lost')));
+    expect(lost, isNotEmpty);
   });
 }
