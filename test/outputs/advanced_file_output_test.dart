@@ -64,17 +64,39 @@ void main() {
     output.output(event1);
     output.output(event2);
 
-    final targetFile = output.targetFile;
-
     await output.destroy();
 
-    var content = await targetFile?.readAsString();
+    final logFile = dir.listSync().first as File;
+    var content = await logFile.readAsString();
     expect(
       content,
       allOf(
         contains("First event"),
         contains("Second event"),
         contains("Third event"),
+      ),
+    );
+  });
+
+  test('Flush temporary buffer on destroy', () async {
+    var output = AdvancedFileOutput(path: dir.path);
+    await output.init();
+
+    final event0 = OutputEvent(LogEvent(Level.info, ""), ["Last event"]);
+    final event1 = OutputEvent(LogEvent(Level.info, ""), ["Very last event"]);
+
+    output.output(event0);
+    output.output(event1);
+
+    await output.destroy();
+
+    final logFile = dir.listSync().first as File;
+    var content = await logFile.readAsString();
+    expect(
+      content,
+      allOf(
+        contains("Last event"),
+        contains("Very last event"),
       ),
     );
   });

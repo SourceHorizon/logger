@@ -25,11 +25,13 @@ class AdvancedFileOutput extends LogOutput {
     Duration maxDelay = const Duration(seconds: 2),
     int maxBufferSize = 2000,
     int maxLogFileSizeMB = 1,
+    String Function(DateTime timestamp, {required bool isLatest})?
+        fileNameFormatter,
   }) {
     throw UnsupportedError("Not supported on this platform.");
   }
 
-  File? get targetFile =>
+  File? get currentFile =>
       throw UnsupportedError("Not supported on this platform.");
 
   @override

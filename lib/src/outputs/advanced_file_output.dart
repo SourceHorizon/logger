@@ -11,26 +11,34 @@ extension _NumExt on num {
 }
 
 /// AdvancedFileOutput allows accumulating logs in a temporary buffer for
-/// a short period [maxDelay] of time before writing them out to a file,
-/// resuling in less frequent writes. [writeImmediately] list contains
+/// a short period [_maxDelay] of time before writing them out to a file,
+/// resuling in less frequent writes. [_writeImmediately] list contains
 /// the log levels that are written out immediately ([Level.warning],
 /// [Level.error] and [Level.fatal] by default).
 ///
-/// It also has a [rotatingFilesMode] (enabled by default) that allows
+/// It also has a [_rotatingFilesMode] (enabled by default) that allows
 /// automatically creating new log files on each [AdvancedFileOutput] init
-/// or when the [maxLogFileSizeMB] is reached. Set [maxLogFileSizeMB] to 0
-/// to disable this behaviour and treat [path] as a particular file path
+/// or when the [_maxLogFileSizeMB] is reached. Set [_maxLogFileSizeMB] to 0
+/// to disable this behaviour and treat [_path] as a particular file path
 /// rather than a directory for auto-created logs.
 class AdvancedFileOutput extends LogOutput {
   AdvancedFileOutput({
-    required this.path,
-    this.overrideExisting = false,
-    this.encoding = utf8,
+    required String path,
+    bool overrideExisting = false,
+    Encoding encoding = utf8,
     List<Level>? writeImmediately,
-    this.maxDelay = const Duration(seconds: 2),
-    this.maxBufferSize = 2000,
-    this.maxLogFileSizeMB = 1,
-  }) : writeImmediately = writeImmediately ??
+    Duration maxDelay = const Duration(seconds: 2),
+    int maxBufferSize = 2000,
+    int maxLogFileSizeMB = 1,
+    String Function(DateTime, {required bool isLatest})? fileNameFormatter,
+  })  : _path = path,
+        _overrideExisting = overrideExisting,
+        _encoding = encoding,
+        _maxDelay = maxDelay,
+        _maxLogFileSizeMB = maxLogFileSizeMB,
+        _maxBufferSize = maxBufferSize,
+        _fileNameFormatter = fileNameFormatter,
+        _writeImmediately = writeImmediately ??
             [
               Level.error,
               Level.fatal,
@@ -39,16 +47,18 @@ class AdvancedFileOutput extends LogOutput {
               Level.wtf,
             ];
 
-  /// Logs directory path by default, particular log file path if [maxLogFileSizeMB] is 0
-  final String path;
+  /// Logs directory path by default, particular log file path if [_maxLogFileSizeMB] is 0
+  final String _path;
 
-  final bool overrideExisting;
-  final Encoding encoding;
+  final bool _overrideExisting;
+  final Encoding _encoding;
 
-  final List<Level> writeImmediately;
-  final Duration maxDelay;
-  final int maxLogFileSizeMB;
-  final int maxBufferSize;
+  final List<Level> _writeImmediately;
+  final Duration _maxDelay;
+  final int _maxLogFileSizeMB;
+  final int _maxBufferSize;
+  final String Function(DateTime timestamp, {required bool isLatest})?
+      _fileNameFormatter;
 
   IOSink? _sink;
   File? _targetFile;
@@ -57,13 +67,13 @@ class AdvancedFileOutput extends LogOutput {
 
   final List<OutputEvent> _buffer = [];
 
-  bool get rotatingFilesMode => maxLogFileSizeMB > 0;
-  File? get targetFile => _targetFile;
+  bool get _rotatingFilesMode => _maxLogFileSizeMB > 0;
+  File? get currentFile => _targetFile;
 
   @override
   Future<void> init() async {
-    if (rotatingFilesMode) {
-      final dir = Directory(path);
+    if (_rotatingFilesMode) {
+      final dir = Directory(_path);
       //we use sync directory check to avoid losing
       //potential initial boot logs in early crash scenarios
       if (!dir.existsSync()) {
@@ -76,7 +86,7 @@ class AdvancedFileOutput extends LogOutput {
       );
     }
 
-    _bufferWriteTimer = Timer.periodic(maxDelay, (_) => _writeOutBuffer());
+    _bufferWriteTimer = Timer.periodic(_maxDelay, (_) => _writeOutBuffer());
     await _updateTargetFile(); //run first setup without waiting for timer tick
   }
 
@@ -87,8 +97,8 @@ class AdvancedFileOutput extends LogOutput {
     // along with any other possible elements that accumulated in it since
     // the last timer tick
     // Also write out if buffer is overfilled
-    if (_buffer.length > maxBufferSize ||
-        writeImmediately.contains(event.level)) {
+    if (_buffer.length > _maxBufferSize ||
+        _writeImmediately.contains(event.level)) {
       _writeOutBuffer();
     }
   }
@@ -104,37 +114,31 @@ class AdvancedFileOutput extends LogOutput {
   }
 
   Future<void> _updateTargetFile() async {
-    if (!rotatingFilesMode) {
-      await _openFile(File(path));
-      return;
-    }
-
-    final t = DateTime.now();
-    final newName =
-        '${t.year}-${t.month.toDigits(2)}-${t.day.toDigits(2)}_${t.hour.toDigits(2)}-${t.minute.toDigits(2)}-${t.second.toDigits(2)}-${t.millisecond.toDigits(3)}';
     if (_targetFile == null) {
       // just create a new file on first boot
-      await _openFile(File('$path/${newName}_init.txt'));
+      await _openNewFile();
     } else {
-      final proposed = File('$path/${newName}_next.txt');
       try {
-        if (await _targetFile!.length() > maxLogFileSizeMB * 1000000) {
+        if (await _targetFile!.length() > _maxLogFileSizeMB * 1000000) {
           await _closeCurrentFile();
-          await _openFile(proposed);
+          await _openNewFile();
         }
-      } catch (e) {
+      } catch (e, s) {
+        print(e);
+        print(s);
         // try creating another file and working with it
         await _closeCurrentFile();
-        await _openFile(proposed);
+        await _openNewFile();
       }
     }
   }
 
-  Future<void> _openFile(File proposed) async {
-    _targetFile = proposed;
+  Future<void> _openNewFile() async {
+    _targetFile = File(
+        _rotatingFilesMode ? '$_path/${_genFileName(isLatest: true)}' : _path);
     _sink = _targetFile!.openWrite(
-      mode: overrideExisting ? FileMode.writeOnly : FileMode.writeOnlyAppend,
-      encoding: encoding,
+      mode: _overrideExisting ? FileMode.writeOnly : FileMode.writeOnlyAppend,
+      encoding: _encoding,
     );
   }
 
@@ -142,13 +146,34 @@ class AdvancedFileOutput extends LogOutput {
     await _sink?.flush();
     await _sink?.close();
     _sink = null; //explicitly make null until assigned again
+    if (_rotatingFilesMode) {
+      await _targetFile?.rename('$_path/${_genFileName(isLatest: false)}');
+    }
+  }
+
+  String _genFileName({required bool isLatest}) {
+    final t = DateTime.now();
+    if (_fileNameFormatter != null) {
+      return _fileNameFormatter!(t, isLatest: isLatest);
+    } else {
+      if (isLatest) {
+        return 'latest.log';
+      } else {
+        return '${t.year}-${t.month.toDigits(2)}-${t.day.toDigits(2)}-${t.hour.toDigits(2)}-${t.minute.toDigits(2)}-${t.second.toDigits(2)}-${t.millisecond.toDigits(3)}.log';
+      }
+    }
   }
 
   @override
   Future<void> destroy() async {
     _bufferWriteTimer?.cancel();
     _targetFileUpdater?.cancel();
+    try {
+      _writeOutBuffer();
+    } catch (e, s) {
+      print('Failed to flush buffer before closing the logger: $e');
+      print(s);
+    }
     await _closeCurrentFile();
-    _buffer.clear();
   }
 }
