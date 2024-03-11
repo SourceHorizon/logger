@@ -100,4 +100,24 @@ void main() {
       ),
     );
   });
+
+  test('Detect lost log files', () async {
+    var output = AdvancedFileOutput(path: dir.path);
+    await output.init();
+
+    final event0 = OutputEvent(LogEvent(Level.fatal, ""), ["Fatal"]);
+
+    output.output(event0);
+    //don't destroy old output here, simulate crash
+
+    var newOutput = AdvancedFileOutput(path: dir.path);
+    await newOutput.init();
+
+    final files = dir.listSync();
+    final paths = [for (final f in files) f.path];
+
+    await newOutput.destroy();
+
+    expect(paths, containsOnce((e) => (e as String).endsWith('.lost')));
+  });
 }

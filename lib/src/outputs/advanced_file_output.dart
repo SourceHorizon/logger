@@ -115,6 +115,13 @@ class AdvancedFileOutput extends LogOutput {
 
   Future<void> _updateTargetFile() async {
     if (_targetFile == null) {
+      //if logger wasn't destroyed properly, there may be a latest.log file from the previous
+      //session. we do this check to detect it and rename it to avoid overwriting
+      final prev = File('$_path/${_genFileName(isLatest: true)}');
+      if (_rotatingFilesMode && await prev.exists()) {
+        await prev.rename('$_path/${_genFileName(isLatest: false)}.lost');
+      }
+
       // just create a new file on first boot
       await _openNewFile();
     } else {
