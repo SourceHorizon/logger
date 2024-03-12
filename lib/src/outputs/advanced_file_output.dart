@@ -10,18 +10,44 @@ extension _NumExt on num {
   String toDigits(int digits) => toString().padLeft(digits, '0');
 }
 
-/// AdvancedFileOutput allows accumulating logs in a temporary buffer for
-/// a short period [_maxDelay] of time before writing them out to a file,
-/// resuling in less frequent writes. [_writeImmediately] list contains
-/// the log levels that are written out immediately ([Level.warning],
-/// [Level.error] and [Level.fatal] by default).
+/// Accumulates logs in a buffer to reduce frequent disk, writes while optionally
+/// switching to a new log file if it reaches a certain size.
 ///
-/// It also has a [_rotatingFilesMode] (enabled by default) that allows
-/// automatically creating new log files on each [AdvancedFileOutput] init
-/// or when the [_maxLogFileSizeMB] is reached. Set [_maxLogFileSizeMB] to 0
-/// to disable this behaviour and treat [_path] as a particular file path
-/// rather than a directory for auto-created logs.
+/// [AdvancedFileOutput] offer various improvements over the original
+/// [FileOutput]:
+/// * Managing an internal buffer which collects the logs and only writes
+/// them after a certain period of time to the disk.
+/// * Dynamically switching log files instead of using a single one specified
+/// by the user, when the current file reaches a specified size limit (optionally).
+///
+/// The buffered output can significantly reduce the
+/// frequency of file writes, which can be beneficial for (micro-)SD storage
+/// and other types of low-cost storage (e.g. on IoT devices). Specific log
+/// levels can trigger an immediate flush, without waiting for the next timer
+/// tick.
+///
+/// New log files are created when the current file reaches the specified size
+/// limit. This is useful for writing "archives" of telemetry data and logs
+/// while keeping them structured.
 class AdvancedFileOutput extends LogOutput {
+  /// Creates a buffered file output.
+  ///
+  /// By default, the log is buffered until either the [maxBufferSize] has been
+  /// reached, the timer controlled by [maxDelay] has been triggered or an
+  /// [OutputEvent] contains a [writeImmediately] log level.
+  ///
+  /// [maxFileSizeKB] controls the log file rotation. The output automatically
+  /// switches to a new log file as soon as the current file exceeds it.
+  /// Use -1 to disable log rotation.
+  ///
+  /// [maxDelay] describes the maximum amount of time before the buffer has to be
+  /// written to the file.
+  ///
+  /// Any log levels that are specified in [writeImmediately] trigger an immediate
+  /// flush to the disk ([Level.warning], [Level.error] and [Level.fatal] by default).
+  ///
+  /// [path] is either treated as directory for rotating or as target file name,
+  /// depending on [maxFileSizeKB].
   AdvancedFileOutput({
     required String path,
     bool overrideExisting = false,
@@ -29,14 +55,14 @@ class AdvancedFileOutput extends LogOutput {
     List<Level>? writeImmediately,
     Duration maxDelay = const Duration(seconds: 2),
     int maxBufferSize = 2000,
-    int maxLogFileSizeMB = 1,
+    int maxFileSizeKB = 1024,
     String initialFileName = 'latest.log',
     String Function(DateTime timestamp)? fileNameFormatter,
   })  : _path = path,
         _overrideExisting = overrideExisting,
         _encoding = encoding,
         _maxDelay = maxDelay,
-        _maxLogFileSizeMB = maxLogFileSizeMB,
+        _maxFileSizeKB = maxFileSizeKB,
         _maxBufferSize = maxBufferSize,
         _initialFileName = initialFileName,
         _fileNameFormatter = fileNameFormatter ?? _defaultFileNameFormat,
@@ -49,7 +75,7 @@ class AdvancedFileOutput extends LogOutput {
               Level.wtf,
             ];
 
-  /// Logs directory path by default, particular log file path if [_maxLogFileSizeMB] is 0
+  /// Logs directory path by default, particular log file path if [_maxFileSizeKB] is 0
   final String _path;
 
   final bool _overrideExisting;
@@ -57,7 +83,7 @@ class AdvancedFileOutput extends LogOutput {
 
   final List<Level> _writeImmediately;
   final Duration _maxDelay;
-  final int _maxLogFileSizeMB;
+  final int _maxFileSizeKB;
   final int _maxBufferSize;
   final String _initialFileName;
   final String Function(DateTime timestamp) _fileNameFormatter;
@@ -69,7 +95,7 @@ class AdvancedFileOutput extends LogOutput {
 
   final List<OutputEvent> _buffer = [];
 
-  bool get _rotatingFilesMode => _maxLogFileSizeMB > 0;
+  bool get _rotatingFilesMode => _maxFileSizeKB > 0;
 
   File? get currentFile => _targetFile;
 
@@ -139,7 +165,7 @@ class AdvancedFileOutput extends LogOutput {
       await _openNewFile();
     } else {
       try {
-        if (await _targetFile!.length() > _maxLogFileSizeMB * 1000000) {
+        if (await _targetFile!.length() > _maxFileSizeKB * 1024) {
           await _closeCurrentFile();
           await _openNewFile();
         }

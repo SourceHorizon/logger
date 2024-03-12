@@ -20,7 +20,7 @@ void main() {
     var output = AdvancedFileOutput(
       path: file.path,
       maxDelay: const Duration(milliseconds: 500),
-      maxLogFileSizeMB: 0,
+      maxFileSizeKB: 0,
     );
     await output.init();
 
