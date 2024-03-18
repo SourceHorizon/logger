@@ -96,7 +96,7 @@ void main() {
 
     //And again for another roll
     await output.init();
-    final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 1500]);
+    final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["3" * 1500]);
     output.output(event2);
     await output.destroy();
 
