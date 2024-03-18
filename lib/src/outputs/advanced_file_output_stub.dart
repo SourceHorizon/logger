@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import '../log_level.dart';
 import '../log_output.dart';
@@ -51,14 +50,11 @@ class AdvancedFileOutput extends LogOutput {
     Duration maxDelay = const Duration(seconds: 2),
     int maxBufferSize = 2000,
     int maxFileSizeKB = 1024,
-    String initialFileName = 'latest.log',
+    String latestFileName = 'latest.log',
     String Function(DateTime timestamp)? fileNameFormatter,
   }) {
     throw UnsupportedError("Not supported on this platform.");
   }
-
-  File? get currentFile =>
-      throw UnsupportedError("Not supported on this platform.");
 
   @override
   void output(OutputEvent event) {

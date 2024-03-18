@@ -56,7 +56,7 @@ class AdvancedFileOutput extends LogOutput {
     Duration maxDelay = const Duration(seconds: 2),
     int maxBufferSize = 2000,
     int maxFileSizeKB = 1024,
-    String initialFileName = 'latest.log',
+    String latestFileName = 'latest.log',
     String Function(DateTime timestamp)? fileNameFormatter,
   })  : _path = path,
         _overrideExisting = overrideExisting,
@@ -64,7 +64,6 @@ class AdvancedFileOutput extends LogOutput {
         _maxDelay = maxDelay,
         _maxFileSizeKB = maxFileSizeKB,
         _maxBufferSize = maxBufferSize,
-        _initialFileName = initialFileName,
         _fileNameFormatter = fileNameFormatter ?? _defaultFileNameFormat,
         _writeImmediately = writeImmediately ??
             [
@@ -73,7 +72,8 @@ class AdvancedFileOutput extends LogOutput {
               Level.warning,
               // ignore: deprecated_member_use_from_same_package
               Level.wtf,
-            ];
+            ],
+        _file = maxFileSizeKB > 0 ? File('$path/$latestFileName') : File(path);
 
   /// Logs directory path by default, particular log file path if [_maxFileSizeKB] is 0
   final String _path;
@@ -85,19 +85,16 @@ class AdvancedFileOutput extends LogOutput {
   final Duration _maxDelay;
   final int _maxFileSizeKB;
   final int _maxBufferSize;
-  final String _initialFileName;
   final String Function(DateTime timestamp) _fileNameFormatter;
 
+  final File _file;
   IOSink? _sink;
-  File? _targetFile;
   Timer? _bufferWriteTimer;
   Timer? _targetFileUpdater;
 
   final List<OutputEvent> _buffer = [];
 
   bool get _rotatingFilesMode => _maxFileSizeKB > 0;
-
-  File? get currentFile => _targetFile;
 
   /// Formats the file with a full date string.
   ///
@@ -126,7 +123,8 @@ class AdvancedFileOutput extends LogOutput {
     }
 
     _bufferWriteTimer = Timer.periodic(_maxDelay, (_) => _writeOutBuffer());
-    await _updateTargetFile(); //run first setup without waiting for timer tick
+    await _openSink();
+    await _updateTargetFile(); //run first check without waiting for timer tick
   }
 
   @override
@@ -145,7 +143,6 @@ class AdvancedFileOutput extends LogOutput {
   void _writeOutBuffer() {
     if (_sink == null) return; //wait until _sink becomes available
     for (final event in _buffer) {
-      //
       _sink?.writeAll(event.lines, Platform.isWindows ? '\r\n' : '\n');
       _sink?.writeln();
     }
@@ -153,52 +150,34 @@ class AdvancedFileOutput extends LogOutput {
   }
 
   Future<void> _updateTargetFile() async {
-    if (_targetFile == null) {
-      //if logger wasn't destroyed properly, there may be a initial log file from the previous
-      //session. we do this check to detect it and rename it to avoid overwriting
-      final prev = File('$_path/${_getFileName(newFile: true)}');
-      if (_rotatingFilesMode && await prev.exists()) {
-        await prev.rename('$_path/${_getFileName()}.lost');
+    try {
+      if (await _file.exists() &&
+          await _file.length() > _maxFileSizeKB * 1024) {
+        // rotate the log file
+        await _closeSink();
+        await _file.rename('$_path/${_fileNameFormatter(DateTime.now())}');
+        await _openSink();
       }
-
-      // just create a new file on first boot
-      await _openNewFile();
-    } else {
-      try {
-        if (await _targetFile!.length() > _maxFileSizeKB * 1024) {
-          await _closeCurrentFile();
-          await _openNewFile();
-        }
-      } catch (e, s) {
-        print(e);
-        print(s);
-        // try creating another file and working with it
-        await _closeCurrentFile();
-        await _openNewFile();
-      }
+    } catch (e, s) {
+      print(e);
+      print(s);
+      // try creating another file and working with it
+      await _closeSink();
+      await _openSink();
     }
   }
 
-  Future<void> _openNewFile() async {
-    _targetFile = File(
-        _rotatingFilesMode ? '$_path/${_getFileName(newFile: true)}' : _path);
-    _sink = _targetFile!.openWrite(
+  Future<void> _openSink() async {
+    _sink = _file.openWrite(
       mode: _overrideExisting ? FileMode.writeOnly : FileMode.writeOnlyAppend,
       encoding: _encoding,
     );
   }
 
-  Future<void> _closeCurrentFile() async {
+  Future<void> _closeSink() async {
     await _sink?.flush();
     await _sink?.close();
     _sink = null; //explicitly make null until assigned again
-    if (_rotatingFilesMode) {
-      await _targetFile?.rename('$_path/${_getFileName()}');
-    }
-  }
-
-  String _getFileName({bool newFile = false}) {
-    return newFile ? _initialFileName : _fileNameFormatter(DateTime.now());
   }
 
   @override
@@ -211,6 +190,6 @@ class AdvancedFileOutput extends LogOutput {
       print('Failed to flush buffer before closing the logger: $e');
       print(s);
     }
-    await _closeCurrentFile();
+    await _closeSink();
   }
 }

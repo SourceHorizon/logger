@@ -48,7 +48,7 @@ void main() {
     );
   });
 
-  test('Real file read and write with dynamic file names and immediate output',
+  test('Real file read and write with rotating file names and immediate output',
       () async {
     var output = AdvancedFileOutput(
       path: dir.path,
@@ -66,7 +66,7 @@ void main() {
 
     await output.destroy();
 
-    final logFile = dir.listSync().first as File;
+    final logFile = File('${dir.path}/latest.log');
     var content = await logFile.readAsString();
     expect(
       content,
@@ -75,6 +75,36 @@ void main() {
         contains("Second event"),
         contains("Third event"),
       ),
+    );
+  });
+
+  test('Rolling files', () async {
+    var output = AdvancedFileOutput(
+      path: dir.path,
+      maxFileSizeKB: 1,
+    );
+    await output.init();
+    final event0 = OutputEvent(LogEvent(Level.fatal, ""), ["1" * 1500]);
+    output.output(event0);
+    await output.destroy();
+
+    //Start again to roll files on init without waiting for timer tick
+    await output.init();
+    final event1 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 1500]);
+    output.output(event1);
+    await output.destroy();
+
+    //And again for another roll
+    await output.init();
+    final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 1500]);
+    output.output(event2);
+    await output.destroy();
+
+    final files = dir.listSync();
+
+    expect(
+      files,
+      (hasLength(3)),
     );
   });
 
@@ -90,7 +120,7 @@ void main() {
 
     await output.destroy();
 
-    final logFile = dir.listSync().first as File;
+    final logFile = File('${dir.path}/latest.log');
     var content = await logFile.readAsString();
     expect(
       content,
@@ -99,26 +129,5 @@ void main() {
         contains("Very last event"),
       ),
     );
-  });
-
-  test('Detect lost log files', () async {
-    var output = AdvancedFileOutput(path: dir.path);
-    await output.init();
-
-    final event0 = OutputEvent(LogEvent(Level.fatal, ""), ["Fatal"]);
-
-    output.output(event0);
-    //don't destroy old output here, simulate crash
-
-    var newOutput = AdvancedFileOutput(path: dir.path);
-    await newOutput.init();
-
-    final files = dir.listSync();
-    final lost = [for (final f in files) f.path]
-        .where((p) => p.endsWith('.lost'))
-        .toList();
-
-    await newOutput.destroy();
-    expect(lost, isNotEmpty);
   });
 }
