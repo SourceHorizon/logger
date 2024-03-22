@@ -75,7 +75,7 @@ class AdvancedFileOutput extends LogOutput {
             ],
         _file = maxFileSizeKB > 0 ? File('$path/$latestFileName') : File(path);
 
-  /// Logs directory path by default, particular log file path if [_maxFileSizeKB] is 0
+  /// Logs directory path by default, particular log file path if [_maxFileSizeKB] is 0.
   final String _path;
 
   final bool _overrideExisting;
@@ -110,8 +110,8 @@ class AdvancedFileOutput extends LogOutput {
   Future<void> init() async {
     if (_rotatingFilesMode) {
       final dir = Directory(_path);
-      //we use sync directory check to avoid losing
-      //potential initial boot logs in early crash scenarios
+      // We use sync directory check to avoid losing potential initial boot logs
+      // in early crash scenarios.
       if (!dir.existsSync()) {
         dir.createSync(recursive: true);
       }
@@ -124,16 +124,15 @@ class AdvancedFileOutput extends LogOutput {
 
     _bufferWriteTimer = Timer.periodic(_maxDelay, (_) => _writeOutBuffer());
     await _openSink();
-    await _updateTargetFile(); //run first check without waiting for timer tick
+    await _updateTargetFile(); // Run first check without waiting for timer tick
   }
 
   @override
   void output(OutputEvent event) {
     _buffer.add(event);
     // If event level is present in writeImmediately, write out the buffer
-    // along with any other possible elements that accumulated in it since
-    // the last timer tick
-    // Also write out if buffer is overfilled
+    // along with any other possible elements that accumulated since
+    // the last timer tick. Additionally, if the buffer is full.
     if (_buffer.length > _maxBufferSize ||
         _writeImmediately.contains(event.level)) {
       _writeOutBuffer();
@@ -141,7 +140,7 @@ class AdvancedFileOutput extends LogOutput {
   }
 
   void _writeOutBuffer() {
-    if (_sink == null) return; //wait until _sink becomes available
+    if (_sink == null) return; // Wait until _sink becomes available
     for (final event in _buffer) {
       _sink?.writeAll(event.lines, Platform.isWindows ? '\r\n' : '\n');
       _sink?.writeln();
@@ -153,7 +152,7 @@ class AdvancedFileOutput extends LogOutput {
     try {
       if (await _file.exists() &&
           await _file.length() > _maxFileSizeKB * 1024) {
-        // rotate the log file
+        // Rotate the log file
         await _closeSink();
         await _file.rename('$_path/${_fileNameFormatter(DateTime.now())}');
         await _openSink();
@@ -161,7 +160,7 @@ class AdvancedFileOutput extends LogOutput {
     } catch (e, s) {
       print(e);
       print(s);
-      // try creating another file and working with it
+      // Try creating another file and working with it
       await _closeSink();
       await _openSink();
     }
@@ -177,7 +176,7 @@ class AdvancedFileOutput extends LogOutput {
   Future<void> _closeSink() async {
     await _sink?.flush();
     await _sink?.close();
-    _sink = null; //explicitly make null until assigned again
+    _sink = null; // Explicitly set null until assigned again
   }
 
   @override

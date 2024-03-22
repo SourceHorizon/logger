@@ -32,7 +32,7 @@ void main() {
     output.output(event1);
     output.output(event2);
 
-    //wait until buffer writes out to file
+    // Wait until buffer is flushed to file
     await Future.delayed(const Duration(seconds: 1));
 
     await output.destroy();
@@ -88,13 +88,13 @@ void main() {
     output.output(event0);
     await output.destroy();
 
-    //Start again to roll files on init without waiting for timer tick
+    // Start again to roll files on init without waiting for timer tick
     await output.init();
     final event1 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 1500]);
     output.output(event1);
     await output.destroy();
 
-    //And again for another roll
+    // And again for another roll
     await output.init();
     final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["3" * 1500]);
     output.output(event2);
