@@ -89,7 +89,7 @@ class AdvancedFileOutput extends LogOutput {
 
   final File _file;
   IOSink? _sink;
-  Timer? _bufferWriteTimer;
+  Timer? _bufferFlushTimer;
   Timer? _targetFileUpdater;
 
   final List<OutputEvent> _buffer = [];
@@ -122,7 +122,7 @@ class AdvancedFileOutput extends LogOutput {
       );
     }
 
-    _bufferWriteTimer = Timer.periodic(_maxDelay, (_) => _writeOutBuffer());
+    _bufferFlushTimer = Timer.periodic(_maxDelay, (_) => _flushBuffer());
     await _openSink();
     await _updateTargetFile(); // Run first check without waiting for timer tick
   }
@@ -130,16 +130,16 @@ class AdvancedFileOutput extends LogOutput {
   @override
   void output(OutputEvent event) {
     _buffer.add(event);
-    // If event level is present in writeImmediately, write out the buffer
+    // If event level is present in writeImmediately, flush the complete buffer
     // along with any other possible elements that accumulated since
     // the last timer tick. Additionally, if the buffer is full.
     if (_buffer.length > _maxBufferSize ||
         _writeImmediately.contains(event.level)) {
-      _writeOutBuffer();
+      _flushBuffer();
     }
   }
 
-  void _writeOutBuffer() {
+  void _flushBuffer() {
     if (_sink == null) return; // Wait until _sink becomes available
     for (final event in _buffer) {
       _sink?.writeAll(event.lines, Platform.isWindows ? '\r\n' : '\n');
@@ -181,10 +181,10 @@ class AdvancedFileOutput extends LogOutput {
 
   @override
   Future<void> destroy() async {
-    _bufferWriteTimer?.cancel();
+    _bufferFlushTimer?.cancel();
     _targetFileUpdater?.cancel();
     try {
-      _writeOutBuffer();
+      _flushBuffer();
     } catch (e, s) {
       print('Failed to flush buffer before closing the logger: $e');
       print(s);
