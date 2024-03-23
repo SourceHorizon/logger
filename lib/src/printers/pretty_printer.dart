@@ -251,6 +251,7 @@ class PrettyPrinter extends LogPrinter {
       timeStr,
       errorStr,
       stackTraceStr,
+      event.tag,
     );
   }
 
@@ -391,6 +392,7 @@ class PrettyPrinter extends LogPrinter {
     String? time,
     String? error,
     String? stacktrace,
+    String? tag,
   ) {
     List<String> buffer = [];
     var verticalLineAtLevel = (_includeBox[level]!) ? ('$verticalLine ') : '';
@@ -413,6 +415,11 @@ class PrettyPrinter extends LogPrinter {
 
     if (time != null) {
       buffer.add(color('$verticalLineAtLevel$time'));
+      if (_includeBox[level]!) buffer.add(color(_middleBorder));
+    }
+
+    if (tag != null) {
+      buffer.add(color('$verticalLineAtLevel$tag'));
       if (_includeBox[level]!) buffer.add(color(_middleBorder));
     }
 
