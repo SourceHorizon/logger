@@ -399,6 +399,11 @@ class PrettyPrinter extends LogPrinter {
     var color = _getLevelColor(level);
     if (_includeBox[level]!) buffer.add(color(_topBorder));
 
+    if (tag != null) {
+      buffer.add(color('$verticalLineAtLevel$tag'));
+      if (_includeBox[level]!) buffer.add(color(_middleBorder));
+    }
+
     if (error != null) {
       for (var line in error.split('\n')) {
         buffer.add(color('$verticalLineAtLevel$line'));
@@ -415,11 +420,6 @@ class PrettyPrinter extends LogPrinter {
 
     if (time != null) {
       buffer.add(color('$verticalLineAtLevel$time'));
-      if (_includeBox[level]!) buffer.add(color(_middleBorder));
-    }
-
-    if (tag != null) {
-      buffer.add(color('$verticalLineAtLevel$tag'));
       if (_includeBox[level]!) buffer.add(color(_middleBorder));
     }
 
