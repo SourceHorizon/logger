@@ -124,7 +124,9 @@ class AdvancedFileOutput extends LogOutput {
 
     _bufferFlushTimer = Timer.periodic(_maxDelay, (_) => _flushBuffer());
     await _openSink();
-    await _updateTargetFile(); // Run first check without waiting for timer tick
+    if (_rotatingFilesMode) {
+      await _updateTargetFile(); // Run first check without waiting for timer tick
+    }
   }
 
   @override
