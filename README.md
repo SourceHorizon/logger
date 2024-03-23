@@ -179,4 +179,6 @@ requests.
 
 # Acknowledgments
 
-This package was originally created by [Simon Choi](https://github.com/simc).
+This package was originally created by [Simon Choi](https://github.com/simc), with further
+development by [Harm Aarts](https://github.com/haarts), greatly enhancing its functionality over
+time. 
