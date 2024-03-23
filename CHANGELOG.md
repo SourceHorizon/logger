@@ -1,3 +1,9 @@
+## 2.2.0
+
+- Added AdvancedFileOutput. Thanks to
+  @pyciko ([#65](https://github.com/SourceHorizon/logger/pull/65)).
+- Added missing acknowledgments in README.
+
 ## 2.1.0
 
 - Improved README explanation about debug mode. Thanks to
