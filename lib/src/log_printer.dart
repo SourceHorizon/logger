@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'log_event.dart';
 
 /// An abstract handler of log events.
@@ -15,4 +17,19 @@ abstract class LogPrinter {
   List<String> log(LogEvent event);
 
   Future<void> destroy() async {}
+
+  String stringifyMessage(Object? message) {
+    if (message is String) return message;
+
+    if (message is Map || message is Iterable) {
+      return encodeJson(message);
+    } else {
+      return message.toString();
+    }
+  }
+
+  String encodeJson(Object? message) {
+    var encoder = JsonEncoder.withIndent('  ', (object) => object.toString());
+    return encoder.convert(message);
+  }
 }

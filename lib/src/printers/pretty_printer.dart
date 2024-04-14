@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 
 import '../ansi_color.dart';
@@ -351,20 +350,6 @@ class PrettyPrinter extends LogPrinter {
 
   String getTime(DateTime time) {
     return dateTimeFormat(time);
-  }
-
-  // Handles any object that is causing JsonEncoder() problems
-  Object toEncodableFallback(dynamic object) {
-    return object.toString();
-  }
-
-  String stringifyMessage(Object? message) {
-    if (message is Map || message is Iterable) {
-      var encoder = JsonEncoder.withIndent('  ', toEncodableFallback);
-      return encoder.convert(message);
-    } else {
-      return message.toString();
-    }
   }
 
   AnsiColor _getLevelColor(Level level) {
