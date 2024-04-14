@@ -357,7 +357,7 @@ class PrettyPrinter extends LogPrinter {
     return object.toString();
   }
 
-  String stringifyMessage(dynamic message) {
+  String stringifyMessage(Object? message) {
     final finalMessage = message is Function ? message() : message;
     if (finalMessage is Map || finalMessage is Iterable) {
       var encoder = JsonEncoder.withIndent('  ', toEncodableFallback);
