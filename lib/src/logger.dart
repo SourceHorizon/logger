@@ -183,6 +183,9 @@ class Logger {
     }
 
     if (_filter.shouldLog(logEvent)) {
+      if (message is Function) {
+        logEvent = logEvent.copyWith(message: message());
+      }
       var output = _printer.log(logEvent);
 
       if (output.isNotEmpty) {

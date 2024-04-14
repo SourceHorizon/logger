@@ -49,12 +49,11 @@ class SimplePrinter extends LogPrinter {
   }
 
   String _stringifyMessage(Object? message) {
-    final finalMessage = message is Function ? message() : message;
-    if (finalMessage is Map || finalMessage is Iterable) {
+    if (message is Map || message is Iterable) {
       var encoder = const JsonEncoder.withIndent(null);
-      return encoder.convert(finalMessage);
+      return encoder.convert(message);
     } else {
-      return finalMessage.toString();
+      return message.toString();
     }
   }
 }

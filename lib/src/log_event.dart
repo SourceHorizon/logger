@@ -16,4 +16,20 @@ class LogEvent {
     this.error,
     this.stackTrace,
   }) : time = time ?? DateTime.now();
+
+  LogEvent copyWith({
+    Level? level,
+    Object? message,
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    return LogEvent(
+      level ?? this.level,
+      message ?? this.message,
+      time: time ?? this.time,
+      error: error ?? this.error,
+      stackTrace: stackTrace ?? this.stackTrace,
+    );
+  }
 }

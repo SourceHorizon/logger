@@ -156,25 +156,6 @@ void main() {
     }
   });
 
-  test('deal with Function type message', () {
-    final prettyPrinter = PrettyPrinter();
-    final expectedMessage = 'heavily computed very pretty Message';
-    final withFunction = LogEvent(
-      Level.debug,
-      () => expectedMessage,
-      error: 'some error',
-      stackTrace: StackTrace.current,
-    );
-
-    final actualLog = prettyPrinter.log(withFunction);
-    final actualLogString = readMessage(actualLog);
-
-    expect(
-      actualLogString,
-      contains(expectedMessage),
-    );
-  });
-
   test('stackTraceBeginIndex', () {
     final prettyPrinter = PrettyPrinter(
       stackTraceBeginIndex: 2,

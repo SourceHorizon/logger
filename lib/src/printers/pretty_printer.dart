@@ -359,12 +359,11 @@ class PrettyPrinter extends LogPrinter {
   }
 
   String stringifyMessage(Object? message) {
-    final finalMessage = message is Function ? message() : message;
-    if (finalMessage is Map || finalMessage is Iterable) {
+    if (message is Map || message is Iterable) {
       var encoder = JsonEncoder.withIndent('  ', toEncodableFallback);
-      return encoder.convert(finalMessage);
+      return encoder.convert(message);
     } else {
-      return finalMessage.toString();
+      return message.toString();
     }
   }
 
