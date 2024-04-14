@@ -67,6 +67,12 @@ class Logger {
   /// uses `async` in their `init` method.
   Future<void> get init => _initialization;
 
+  LogFilter get filter => _filter;
+
+  LogPrinter get printer => _printer;
+
+  LogOutput get output => _output;
+
   /// Log a message at level [Level.verbose].
   @Deprecated(
       "[Level.verbose] is being deprecated in favor of [Level.trace], use [t] instead.")
