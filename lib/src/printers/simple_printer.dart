@@ -48,7 +48,7 @@ class SimplePrinter extends LogPrinter {
     return colors ? color(prefix) : prefix;
   }
 
-  String _stringifyMessage(dynamic message) {
+  String _stringifyMessage(Object? message) {
     final finalMessage = message is Function ? message() : message;
     if (finalMessage is Map || finalMessage is Iterable) {
       var encoder = const JsonEncoder.withIndent(null);

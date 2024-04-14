@@ -2,7 +2,7 @@ import 'log_level.dart';
 
 class LogEvent {
   final Level level;
-  final dynamic message;
+  final Object? message;
   final Object? error;
   final StackTrace? stackTrace;
 
