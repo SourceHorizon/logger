@@ -14,9 +14,7 @@ typedef OutputCallback = void Function(OutputEvent event);
 
 /// Use instances of logger to send log messages to the [LogPrinter].
 class Logger {
-  /// The current logging level of the app.
-  ///
-  /// All logs with levels below this level will be omitted.
+  /// The default logging level of new loggers.
   static Level defaultLevel = Level.trace;
 
   /// The current default implementation of log filter.
@@ -33,6 +31,10 @@ class Logger {
   static final Set<OutputCallback> _outputCallbacks = {};
 
   late final Future<void> _initialization;
+
+  /// All logs with levels below this level will be omitted.
+  Level level;
+
   final LogFilter _filter;
   final LogPrinter _printer;
   final LogOutput _output;
@@ -44,17 +46,19 @@ class Logger {
   /// defaults: [PrettyPrinter], [DevelopmentFilter] and [ConsoleOutput] will be
   /// used.
   Logger({
+    Level? level,
     LogFilter? filter,
     LogPrinter? printer,
     LogOutput? output,
-    Level? level,
-  })  : _filter = filter ?? defaultFilter(),
+  })  : level = level ?? defaultLevel,
+        _filter = filter ?? defaultFilter(),
         _printer = printer ?? defaultPrinter(),
         _output = output ?? defaultOutput() {
+    _filter.logger = this;
+    _printer.logger = this;
+    _output.logger = this;
+
     var filterInit = _filter.init();
-    if (level != null) {
-      _filter.level = level;
-    }
     var printerInit = _printer.init();
     var outputInit = _output.init();
     _initialization = Future.wait([filterInit, printerInit, outputInit]);

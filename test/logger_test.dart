@@ -86,17 +86,6 @@ class _AsyncOutput extends LogOutput {
   }
 }
 
-/// Test class for the lazy-initialization of variables.
-class LazyLogger {
-  static bool? printed;
-  static final filter = ProductionFilter();
-  static final printer = _CallbackPrinter((l, m, e, s) {
-    printed = true;
-    return [];
-  });
-  static final logger = Logger(filter: filter, printer: printer);
-}
-
 void main() {
   Level? printedLevel;
   Object? printedMessage;
@@ -248,7 +237,7 @@ void main() {
     expect(printedMessage, heavyComputation);
   });
 
-  test('setting log level above log level of message', () {
+  test('Setting log level above log level of message', () {
     printedMessage = null;
     var logger = Logger(
       filter: ProductionFilter(),
@@ -263,21 +252,17 @@ void main() {
     expect(printedMessage, 'This is');
   });
 
-  test('Setting filter Levels', () {
-    var filter = ProductionFilter();
-    expect(filter.level, Logger.defaultLevel);
-
+  test('Setting log level', () {
     final initLevel = Level.warning;
-    // ignore: unused_local_variable
     var logger = Logger(
-      filter: filter,
+      filter: ProductionFilter(),
       printer: callbackPrinter,
       level: initLevel,
     );
-    expect(filter.level, initLevel);
+    expect(logger.filter.level, initLevel);
 
-    filter.level = Level.fatal;
-    expect(filter.level, Level.fatal);
+    logger.level = Level.fatal;
+    expect(logger.filter.level, Level.fatal);
   });
 
   test('Logger.close', () async {
@@ -285,13 +270,6 @@ void main() {
     expect(logger.isClosed(), false);
     await logger.close();
     expect(logger.isClosed(), true);
-  });
-
-  test('Lazy Logger Initialization', () {
-    expect(LazyLogger.printed, isNull);
-    LazyLogger.filter.level = Level.warning;
-    LazyLogger.logger.i("This is an info message and should not show");
-    expect(LazyLogger.printed, isNull);
   });
 
   test('Async Filter Initialization', () async {
