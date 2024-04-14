@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'log_event.dart';
+import 'logger.dart';
 
 /// An abstract handler of log events.
 ///
@@ -10,6 +11,8 @@ import 'log_event.dart';
 ///
 /// You can implement a `LogPrinter` from scratch or extend [PrettyPrinter].
 abstract class LogPrinter {
+  late Logger logger;
+
   Future<void> init() async {}
 
   /// Is called every time a new [LogEvent] is sent and handles printing or

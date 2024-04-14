@@ -5,14 +5,12 @@ import 'logger.dart';
 /// An abstract filter of log messages.
 ///
 /// You can implement your own `LogFilter` or use [DevelopmentFilter].
-/// Every implementation should consider [level].
+/// Every implementation should consider [Logger.level].
 abstract class LogFilter {
-  Level? _level;
+  late Logger logger;
 
-  // Still nullable for backwards compatibility.
-  Level? get level => _level ?? Logger.defaultLevel;
-
-  set level(Level? value) => _level = value;
+  /// Shortcut getter for [Logger.level].
+  Level get level => logger.level;
 
   Future<void> init() async {}
 
