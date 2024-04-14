@@ -71,7 +71,7 @@ class Logger {
   @Deprecated(
       "[Level.verbose] is being deprecated in favor of [Level.trace], use [t] instead.")
   void v(
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
@@ -81,7 +81,7 @@ class Logger {
 
   /// Log a message at level [Level.trace].
   void t(
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
@@ -91,7 +91,7 @@ class Logger {
 
   /// Log a message at level [Level.debug].
   void d(
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
@@ -101,7 +101,7 @@ class Logger {
 
   /// Log a message at level [Level.info].
   void i(
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
@@ -111,7 +111,7 @@ class Logger {
 
   /// Log a message at level [Level.warning].
   void w(
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
@@ -122,7 +122,7 @@ class Logger {
 
   /// Log a message at level [Level.error].
   void e(
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
@@ -134,7 +134,7 @@ class Logger {
   @Deprecated(
       "[Level.wtf] is being deprecated in favor of [Level.fatal], use [f] instead.")
   void wtf(
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
@@ -144,7 +144,7 @@ class Logger {
 
   /// Log a message at level [Level.fatal].
   void f(
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
@@ -155,7 +155,7 @@ class Logger {
   /// Log a message with [level].
   void log(
     Level level,
-    dynamic message, {
+    Object? message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,

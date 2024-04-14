@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 
 typedef PrinterCallback = List<String> Function(
   Level level,
-  dynamic message,
+  Object? message,
   Object? error,
   StackTrace? stackTrace,
 );
@@ -99,8 +99,8 @@ class LazyLogger {
 
 void main() {
   Level? printedLevel;
-  dynamic printedMessage;
-  dynamic printedError;
+  Object? printedMessage;
+  Object? printedError;
   StackTrace? printedStackTrace;
   var callbackPrinter = _CallbackPrinter((l, m, e, s) {
     printedLevel = l;
