@@ -35,7 +35,7 @@ class SimplePrinter extends LogPrinter {
 
   @override
   List<String> log(LogEvent event) {
-    var messageStr = _stringifyMessage(event.message);
+    var messageStr = stringifyMessage(event.message);
     var errorStr = event.error != null ? '  ERROR: ${event.error}' : '';
     var timeStr = printTime ? 'TIME: ${event.time.toIso8601String()}' : '';
     return ['${_labelFor(event.level)} $timeStr $messageStr$errorStr'];
@@ -48,12 +48,9 @@ class SimplePrinter extends LogPrinter {
     return colors ? color(prefix) : prefix;
   }
 
-  String _stringifyMessage(Object? message) {
-    if (message is Map || message is Iterable) {
-      var encoder = const JsonEncoder.withIndent(null);
-      return encoder.convert(message);
-    } else {
-      return message.toString();
-    }
+  @override
+  String encodeJson(Object? message) {
+    var encoder = const JsonEncoder.withIndent(null);
+    return encoder.convert(message);
   }
 }
