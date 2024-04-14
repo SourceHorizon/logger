@@ -240,6 +240,14 @@ void main() {
     expect(printedStackTrace, stackTrace);
   });
 
+  test('Deal with function messages', () {
+    final heavyComputation = 'heavily computed very pretty Message';
+
+    var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    logger.f(() => heavyComputation);
+    expect(printedMessage, heavyComputation);
+  });
+
   test('setting log level above log level of message', () {
     printedMessage = null;
     var logger = Logger(
