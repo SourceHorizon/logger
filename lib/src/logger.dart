@@ -17,7 +17,7 @@ class Logger {
   /// The current logging level of the app.
   ///
   /// All logs with levels below this level will be omitted.
-  static Level level = Level.trace;
+  static Level defaultLevel = Level.trace;
 
   /// The current default implementation of log filter.
   static LogFilter Function() defaultFilter = () => DevelopmentFilter();

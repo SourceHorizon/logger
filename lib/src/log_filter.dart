@@ -5,12 +5,12 @@ import 'logger.dart';
 /// An abstract filter of log messages.
 ///
 /// You can implement your own `LogFilter` or use [DevelopmentFilter].
-/// Every implementation should consider [Logger.level].
+/// Every implementation should consider [level].
 abstract class LogFilter {
   Level? _level;
 
   // Still nullable for backwards compatibility.
-  Level? get level => _level ?? Logger.level;
+  Level? get level => _level ?? Logger.defaultLevel;
 
   set level(Level? value) => _level = value;
 

@@ -265,7 +265,7 @@ void main() {
 
   test('Setting filter Levels', () {
     var filter = ProductionFilter();
-    expect(filter.level, Logger.level);
+    expect(filter.level, Logger.defaultLevel);
 
     final initLevel = Level.warning;
     // ignore: unused_local_variable
