@@ -48,6 +48,15 @@ class AdvancedFileOutput extends LogOutput {
   ///
   /// [path] is either treated as directory for rotating or as target file name,
   /// depending on [maxFileSizeKB].
+  ///
+  /// [maxRotatedFilesCount] controls the number of rotated files to keep. By default
+  /// is null, which means no limit.
+  /// If set to a positive number, the output will keep the last
+  /// [maxRotatedFilesCount] files. The deletion step will be executed by sorting
+  /// files following the [fileSorter] ascending strategy and keeping the last files.
+  /// The [latestFileName] will not be counted. The default [fileSorter] strategy is
+  /// sorting by last modified date, beware that could be not reliable in some
+  /// platforms and/or filesystems.
   AdvancedFileOutput({
     required String path,
     bool overrideExisting = false,
@@ -58,6 +67,8 @@ class AdvancedFileOutput extends LogOutput {
     int maxFileSizeKB = 1024,
     String latestFileName = 'latest.log',
     String Function(DateTime timestamp)? fileNameFormatter,
+    int? maxRotatedFilesCount,
+    Comparator<File>? fileSorter,
   })  : _path = path,
         _overrideExisting = overrideExisting,
         _encoding = encoding,
@@ -73,6 +84,8 @@ class AdvancedFileOutput extends LogOutput {
               // ignore: deprecated_member_use_from_same_package
               Level.wtf,
             ],
+        _maxRotatedFilesCount = maxRotatedFilesCount,
+        _fileSorter = fileSorter ?? _defaultFileSorter,
         _file = maxFileSizeKB > 0 ? File('$path/$latestFileName') : File(path);
 
   /// Logs directory path by default, particular log file path if [_maxFileSizeKB] is 0.
@@ -86,6 +99,8 @@ class AdvancedFileOutput extends LogOutput {
   final int _maxFileSizeKB;
   final int _maxBufferSize;
   final String Function(DateTime timestamp) _fileNameFormatter;
+  final int? _maxRotatedFilesCount;
+  final Comparator<File> _fileSorter;
 
   final File _file;
   IOSink? _sink;
@@ -104,6 +119,14 @@ class AdvancedFileOutput extends LogOutput {
     return '${t.year}-${t.month.toDigits(2)}-${t.day.toDigits(2)}'
         '-${t.hour.toDigits(2)}-${t.minute.toDigits(2)}-${t.second.toDigits(2)}'
         '-${t.millisecond.toDigits(3)}.log';
+  }
+
+  /// Sort files by their last modified date.
+  /// This behaviour is inspired by the Log4j PathSorter.
+  ///
+  /// This method fulfills the requirements of the [Comparator] interface.
+  static int _defaultFileSorter(File a, File b) {
+    return a.lastModifiedSync().compareTo(b.lastModifiedSync());
   }
 
   @override
@@ -157,6 +180,7 @@ class AdvancedFileOutput extends LogOutput {
         // Rotate the log file
         await _closeSink();
         await _file.rename('$_path/${_fileNameFormatter(DateTime.now())}');
+        await _deleteRotatedFiles();
         await _openSink();
       }
     } catch (e, s) {
@@ -179,6 +203,35 @@ class AdvancedFileOutput extends LogOutput {
     await _sink?.flush();
     await _sink?.close();
     _sink = null; // Explicitly set null until assigned again
+  }
+
+  Future<void> _deleteRotatedFiles() async {
+    // If maxRotatedFilesCount is not set, keep all files
+    if (_maxRotatedFilesCount == null) return;
+
+    final dir = Directory(_path);
+    final files = dir
+        .listSync()
+        .whereType<File>()
+        // Filter out the latest file
+        .where((f) => f.path != _file.path)
+        .toList();
+
+    // If the number of files is less than the limit, don't delete anything
+    if (files.length <= _maxRotatedFilesCount!) return;
+
+    files.sort(_fileSorter);
+
+    final filesToDelete =
+        files.sublist(0, files.length - _maxRotatedFilesCount!);
+    for (final file in filesToDelete) {
+      try {
+        await file.delete();
+      } catch (e, s) {
+        print('Failed to delete file: $e');
+        print(s);
+      }
+    }
   }
 
   @override

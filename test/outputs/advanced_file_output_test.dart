@@ -108,6 +108,87 @@ void main() {
     );
   });
 
+  test('Rolling files with rotated files deletion', () async {
+    var output = AdvancedFileOutput(
+      path: dir.path,
+      maxFileSizeKB: 1,
+      maxRotatedFilesCount: 1,
+    );
+
+    await output.init();
+    final event0 = OutputEvent(LogEvent(Level.fatal, ""), ["1" * 1500]);
+    output.output(event0);
+    await output.destroy();
+
+    // Start again to roll files on init without waiting for timer tick
+    await output.init();
+    final event1 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 1500]);
+    output.output(event1);
+    await output.destroy();
+
+    // And again for another roll
+    await output.init();
+    final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["3" * 1500]);
+    output.output(event2);
+    await output.destroy();
+
+    final files = dir.listSync();
+
+    // Expect only 2 files: the "latest" that is the current log file
+    // and only one rotated file. The first created file should be deleted.
+    expect(files, hasLength(2));
+    final latestFile = File('${dir.path}/latest.log');
+    final rotatedFile = dir
+        .listSync()
+        .whereType<File>()
+        .firstWhere((file) => file.path != latestFile.path);
+    expect(await latestFile.readAsString(), contains("3"));
+    expect(await rotatedFile.readAsString(), contains("2"));
+  });
+
+  test('Rolling files with custom file sorter', () async {
+    var output = AdvancedFileOutput(
+      path: dir.path,
+      maxFileSizeKB: 1,
+      maxRotatedFilesCount: 1,
+      // Define a custom file sorter that sorts files by their length
+      // (strange behavior for testing purposes) from the longest to
+      // the shortest: the longest file should be deleted first.
+      fileSorter: (a, b) => b.lengthSync().compareTo(a.lengthSync()),
+    );
+
+    await output.init();
+    final event0 = OutputEvent(LogEvent(Level.fatal, ""), ["1" * 1500]);
+    output.output(event0);
+    await output.destroy();
+
+    // Start again to roll files on init without waiting for timer tick
+    await output.init();
+    // Create a second file with a greater length (it should be deleted first)
+    final event1 = OutputEvent(LogEvent(Level.fatal, ""), ["2" * 3000]);
+    output.output(event1);
+    await output.destroy();
+
+    // And again for another roll
+    await output.init();
+    final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["3" * 1500]);
+    output.output(event2);
+    await output.destroy();
+
+    final files = dir.listSync();
+
+    // Expect only 2 files: the "latest" that is the current log file
+    // and only one rotated file (the shortest one).
+    expect(files, hasLength(2));
+    final latestFile = File('${dir.path}/latest.log');
+    final rotatedFile = dir
+        .listSync()
+        .whereType<File>()
+        .firstWhere((file) => file.path != latestFile.path);
+    expect(await latestFile.readAsString(), contains("3"));
+    expect(await rotatedFile.readAsString(), contains("1"));
+  });
+
   test('Flush temporary buffer on destroy', () async {
     var output = AdvancedFileOutput(path: dir.path);
     await output.init();
