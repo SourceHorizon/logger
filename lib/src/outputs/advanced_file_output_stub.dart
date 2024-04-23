@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import '../log_level.dart';
 import '../log_output.dart';
@@ -42,6 +43,15 @@ class AdvancedFileOutput extends LogOutput {
   ///
   /// [path] is either treated as directory for rotating or as target file name,
   /// depending on [maxFileSizeKB].
+  ///
+  /// [maxRotatedFilesCount] controls the number of rotated files to keep. By default
+  /// is null, which means no limit.
+  /// If set to a positive number, the output will keep the last
+  /// [maxRotatedFilesCount] files. The deletion step will be executed by sorting
+  /// files following the [fileSorter] ascending strategy and keeping the last files.
+  /// The [latestFileName] will not be counted. The default [fileSorter] strategy is
+  /// sorting by last modified date, beware that could be not reliable in some
+  /// platforms and/or filesystems.
   AdvancedFileOutput({
     required String path,
     bool overrideExisting = false,
@@ -52,6 +62,8 @@ class AdvancedFileOutput extends LogOutput {
     int maxFileSizeKB = 1024,
     String latestFileName = 'latest.log',
     String Function(DateTime timestamp)? fileNameFormatter,
+    int? maxRotatedFilesCount,
+    Comparator<File>? fileSorter,
   }) {
     throw UnsupportedError("Not supported on this platform.");
   }
