@@ -169,6 +169,9 @@ void main() {
     output.output(event1);
     await output.destroy();
 
+    // Give the OS a chance to flush to the file system (should reduce flakiness)
+    await Future.delayed(const Duration(milliseconds: 50));
+
     // And again for another roll
     await output.init();
     final event2 = OutputEvent(LogEvent(Level.fatal, ""), ["3" * 1500]);
