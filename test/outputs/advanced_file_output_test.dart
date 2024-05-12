@@ -120,8 +120,9 @@ void main() {
     output.output(event0);
     await output.destroy();
 
+    // TODO Find out why test is so flaky with durations <1000ms
     // Give the OS a chance to flush to the file system (should reduce flakiness)
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     // Start again to roll files on init without waiting for timer tick
     await output.init();
@@ -129,7 +130,7 @@ void main() {
     output.output(event1);
     await output.destroy();
 
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     // And again for another roll
     await output.init();
@@ -137,7 +138,7 @@ void main() {
     output.output(event2);
     await output.destroy();
 
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     final files = dir.listSync();
 
