@@ -1,3 +1,8 @@
+## 2.3.0
+
+- AdvancedFileOutput: Added file deletion option. Thanks to
+  @lomby92 ([#71](https://github.com/SourceHorizon/logger/pull/71)).
+
 ## 2.2.0
 
 - Added AdvancedFileOutput. Thanks to
