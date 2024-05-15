@@ -3,6 +3,10 @@ description: Small, easy to use and extensible logger which prints beautiful log
 version: 2.3.0
 repository: https://github.com/SourceHorizon/logger
 
+topics:
+- cli
+- logging
+
 environment:
   sdk: ">=2.17.0 <4.0.0"
 
