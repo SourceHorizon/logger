@@ -1,3 +1,10 @@
+## 2.4.0
+
+- Added pub.dev `topics`. Thanks to
+  @jonasfj ([#74](https://github.com/SourceHorizon/logger/pull/74)).
+- PrettyPrinter: Added `dateTimeFormat` option (backwards-compatible with `printTime`).
+  Fixes [#80](https://github.com/SourceHorizon/logger/issues/80).
+
 ## 2.3.0
 
 - AdvancedFileOutput: Added file deletion option. Thanks to
