@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import '../ansi_color.dart';
+import '../date_time_format.dart';
 import '../log_event.dart';
 import '../log_level.dart';
 import '../log_printer.dart';
@@ -64,7 +65,7 @@ class PrettyPrinter extends LogPrinter {
   static final _browserStackTraceRegex =
       RegExp(r'^(?:package:)?(dart:\S+|\S+)');
 
-  static DateTime? _startTime;
+  static DateTime? startTime;
 
   /// The index at which the stack trace should start.
   ///
@@ -113,7 +114,11 @@ class PrettyPrinter extends LogPrinter {
   final bool printEmojis;
 
   /// Whether [LogEvent.time] is printed.
-  final bool printTime;
+  @Deprecated("Use `dateTimeFormat` instead.")
+  bool get printTime => dateTimeFormat != DateTimeFormat.none;
+
+  /// Controls the format of [LogEvent.time].
+  final DateTimeFormatter dateTimeFormat;
 
   /// Controls the ascii 'boxing' of different [Level]s.
   ///
@@ -191,14 +196,25 @@ class PrettyPrinter extends LogPrinter {
     this.lineLength = 120,
     this.colors = true,
     this.printEmojis = true,
-    this.printTime = false,
+    @Deprecated(
+        "Use `dateTimeFormat` with `DateTimeFormat.onlyTimeAndSinceStart` or `DateTimeFormat.none` instead.")
+    bool? printTime,
+    DateTimeFormatter dateTimeFormat = DateTimeFormat.none,
     this.excludeBox = const {},
     this.noBoxingByDefault = false,
     this.excludePaths = const [],
     this.levelColors,
     this.levelEmojis,
-  }) {
-    _startTime ??= DateTime.now();
+  })  : assert(
+            (printTime != null && dateTimeFormat == DateTimeFormat.none) ||
+                printTime == null,
+            "Don't set printTime when using dateTimeFormat"),
+        dateTimeFormat = printTime == null
+            ? dateTimeFormat
+            : (printTime
+                ? DateTimeFormat.onlyTimeAndSinceStart
+                : DateTimeFormat.none) {
+    startTime ??= DateTime.now();
 
     var doubleDividerLine = StringBuffer();
     var singleDividerLine = StringBuffer();
@@ -241,6 +257,8 @@ class PrettyPrinter extends LogPrinter {
     var errorStr = event.error?.toString();
 
     String? timeStr;
+    // Keep backwards-compatibility to `printTime` check
+    // ignore: deprecated_member_use_from_same_package
     if (printTime) {
       timeStr = getTime(event.time);
     }
@@ -332,24 +350,7 @@ class PrettyPrinter extends LogPrinter {
   }
 
   String getTime(DateTime time) {
-    String threeDigits(int n) {
-      if (n >= 100) return '$n';
-      if (n >= 10) return '0$n';
-      return '00$n';
-    }
-
-    String twoDigits(int n) {
-      if (n >= 10) return '$n';
-      return '0$n';
-    }
-
-    var now = time;
-    var h = twoDigits(now.hour);
-    var min = twoDigits(now.minute);
-    var sec = twoDigits(now.second);
-    var ms = threeDigits(now.millisecond);
-    var timeSinceStart = now.difference(_startTime!).toString();
-    return '$h:$min:$sec.$ms (+$timeSinceStart)';
+    return dateTimeFormat(time);
   }
 
   // Handles any object that is causing JsonEncoder() problems

@@ -2,6 +2,7 @@
 library web;
 
 export 'src/ansi_color.dart';
+export 'src/date_time_format.dart';
 export 'src/filters/development_filter.dart';
 export 'src/filters/production_filter.dart';
 export 'src/log_event.dart';
