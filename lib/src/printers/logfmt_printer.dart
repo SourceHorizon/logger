@@ -1,3 +1,4 @@
+import '../date_time_format.dart';
 import '../log_event.dart';
 import '../log_level.dart';
 import '../log_printer.dart';
@@ -16,6 +17,10 @@ class LogfmtPrinter extends LogPrinter {
     Level.fatal: 'fatal',
   };
 
+  LogfmtPrinter({
+    super.dateTimeFormat = DateTimeFormat.iso8601,
+  });
+
   @override
   List<String> log(LogEvent event) {
     var output = StringBuffer('level=${levelPrefixes[event.level]}');
@@ -32,6 +37,11 @@ class LogfmtPrinter extends LogPrinter {
         }
       }
     }
+
+    if (printTimestamp) {
+      output.write(' time="${getTime(event.time)}"');
+    }
+
     if (event.error != null) {
       output.write(' error="${event.error}"');
     }
