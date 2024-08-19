@@ -112,12 +112,11 @@ class PrettyPrinter extends LogPrinter {
   /// Whether emojis are prefixed to the log line.
   final bool printEmojis;
 
-  /// Whether [LogEvent.time] is printed.
-  @Deprecated("Use `dateTimeFormat` instead.")
-  bool get printTime => dateTimeFormat != DateTimeFormat.none;
-
   /// Controls the format of [LogEvent.time].
   final DateTimeFormatter dateTimeFormat;
+
+  /// Whether [LogEvent.time] is printed.
+  bool get _printTimestamp => dateTimeFormat != DateTimeFormat.none;
 
   /// Controls the ascii 'boxing' of different [Level]s.
   ///
@@ -195,24 +194,13 @@ class PrettyPrinter extends LogPrinter {
     this.lineLength = 120,
     this.colors = true,
     this.printEmojis = true,
-    @Deprecated(
-        "Use `dateTimeFormat` with `DateTimeFormat.onlyTimeAndSinceStart` or `DateTimeFormat.none` instead.")
-    bool? printTime,
-    DateTimeFormatter dateTimeFormat = DateTimeFormat.none,
+    this.dateTimeFormat = DateTimeFormat.none,
     this.excludeBox = const {},
     this.noBoxingByDefault = false,
     this.excludePaths = const [],
     this.levelColors,
     this.levelEmojis,
-  })  : assert(
-            (printTime != null && dateTimeFormat == DateTimeFormat.none) ||
-                printTime == null,
-            "Don't set printTime when using dateTimeFormat"),
-        dateTimeFormat = printTime == null
-            ? dateTimeFormat
-            : (printTime
-                ? DateTimeFormat.onlyTimeAndSinceStart
-                : DateTimeFormat.none) {
+  }) {
     startTime ??= DateTime.now();
 
     var doubleDividerLine = StringBuffer();
@@ -256,9 +244,7 @@ class PrettyPrinter extends LogPrinter {
     var errorStr = event.error?.toString();
 
     String? timeStr;
-    // Keep backwards-compatibility to `printTime` check
-    // ignore: deprecated_member_use_from_same_package
-    if (printTime) {
+    if (_printTimestamp) {
       timeStr = getTime(event.time);
     }
 
