@@ -40,6 +40,20 @@ void main() {
     expect(output, contains('foo="bar baz"'));
   });
 
+  test('includes time', () {
+    var timestamp = DateTime.now();
+    expect(
+      printer.log(LogEvent(
+        Level.debug,
+        'some message',
+        error: Exception('boom'),
+        stackTrace: StackTrace.current,
+        time: timestamp,
+      ))[0],
+      contains('time="${timestamp.toIso8601String()}"'),
+    );
+  });
+
   test('handles an error/exception', () {
     var output = printer.log(LogEvent(
       Level.debug,
