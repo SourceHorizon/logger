@@ -11,7 +11,8 @@ void main() {
     stackTrace: StackTrace.current,
   );
 
-  var plainPrinter = SimplePrinter(colors: false, printTime: false);
+  var plainPrinter =
+      SimplePrinter(colors: false, dateTimeFormat: DateTimeFormat.none);
 
   test('represent event on a single line (ignoring stacktrace)', () {
     var outputs = plainPrinter.log(event);
@@ -37,13 +38,13 @@ void main() {
   });
 
   test('print time', () {
-    var printer = SimplePrinter(printTime: true);
+    var printer = SimplePrinter(dateTimeFormat: DateTimeFormat.iso8601);
 
     expect(printer.log(event)[0], contains('TIME'));
   });
 
   test('does not print time', () {
-    var printer = SimplePrinter(printTime: false);
+    var printer = SimplePrinter();
 
     expect(printer.log(event)[0], isNot(contains('TIME')));
   });

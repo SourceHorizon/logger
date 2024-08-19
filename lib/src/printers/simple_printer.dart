@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../ansi_color.dart';
+import '../date_time_format.dart';
 import '../log_event.dart';
 import '../log_level.dart';
 import '../log_printer.dart';
@@ -28,16 +29,18 @@ class SimplePrinter extends LogPrinter {
     Level.fatal: const AnsiColor.fg(199),
   };
 
-  final bool printTime;
   final bool colors;
 
-  SimplePrinter({this.printTime = false, this.colors = true});
+  SimplePrinter({
+    super.dateTimeFormat = DateTimeFormat.none,
+    this.colors = true,
+  });
 
   @override
   List<String> log(LogEvent event) {
     var messageStr = stringifyMessage(event.message);
     var errorStr = event.error != null ? '  ERROR: ${event.error}' : '';
-    var timeStr = printTime ? 'TIME: ${event.time.toIso8601String()}' : '';
+    var timeStr = printTimestamp ? 'TIME: ${getTime(event.time)}' : '';
     return ['${_labelFor(event.level)} $timeStr $messageStr$errorStr'];
   }
 
