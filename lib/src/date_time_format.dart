@@ -30,6 +30,12 @@ class DateTimeFormat {
   /// * `2019-06-04 12:30:40.550`
   static const DateTimeFormatter dateAndTime = _dateAndTime;
 
+  /// Prints date and time in ISO-8601 format.
+  ///
+  /// See also:
+  /// [DateTime.toIso8601String]
+  static const DateTimeFormatter iso8601 = _iso8601;
+
   DateTimeFormat._();
 
   static String _none(DateTime t) => throw UnimplementedError();
@@ -66,5 +72,9 @@ class DateTimeFormat {
 
   static String _dateAndTime(DateTime t) {
     return "${_onlyDate(t)} ${_onlyTime(t)}";
+  }
+
+  static String _iso8601(DateTime t) {
+    return t.toIso8601String();
   }
 }
