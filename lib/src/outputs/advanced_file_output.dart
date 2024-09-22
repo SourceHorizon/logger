@@ -181,6 +181,8 @@ class AdvancedFileOutput extends LogOutput {
         await _closeSink();
         await _file.rename('$_path/${_fileNameFormatter(DateTime.now())}');
         await _deleteRotatedFiles();
+        // Reset file ref to "latest"
+        _file = maxFileSizeKB > 0 ? File('$path/$latestFileName') : File(path);
         await _openSink();
       }
     } catch (e, s) {
