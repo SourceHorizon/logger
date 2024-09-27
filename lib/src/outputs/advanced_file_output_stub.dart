@@ -64,6 +64,7 @@ class AdvancedFileOutput extends LogOutput {
     String Function(DateTime timestamp)? fileNameFormatter,
     int? maxRotatedFilesCount,
     Comparator<File>? fileSorter,
+    Duration fileUpdateDuration = const Duration(minutes: 1),
   }) {
     throw UnsupportedError("Not supported on this platform.");
   }
