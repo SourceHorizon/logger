@@ -69,6 +69,7 @@ class AdvancedFileOutput extends LogOutput {
     String Function(DateTime timestamp)? fileNameFormatter,
     int? maxRotatedFilesCount,
     Comparator<File>? fileSorter,
+    Duration fileUpdateDuration = const Duration(minutes: 1),
   })  : _path = path,
         _overrideExisting = overrideExisting,
         _encoding = encoding,
@@ -86,6 +87,7 @@ class AdvancedFileOutput extends LogOutput {
             ],
         _maxRotatedFilesCount = maxRotatedFilesCount,
         _fileSorter = fileSorter ?? _defaultFileSorter,
+        _fileUpdateDuration = fileUpdateDuration,
         _file = maxFileSizeKB > 0 ? File('$path/$latestFileName') : File(path);
 
   /// Logs directory path by default, particular log file path if [_maxFileSizeKB] is 0.
@@ -101,6 +103,7 @@ class AdvancedFileOutput extends LogOutput {
   final String Function(DateTime timestamp) _fileNameFormatter;
   final int? _maxRotatedFilesCount;
   final Comparator<File> _fileSorter;
+  final Duration _fileUpdateDuration;
 
   final File _file;
   IOSink? _sink;
@@ -140,7 +143,7 @@ class AdvancedFileOutput extends LogOutput {
       }
 
       _targetFileUpdater = Timer.periodic(
-        const Duration(minutes: 1),
+        _fileUpdateDuration,
         (_) => _updateTargetFile(),
       );
     }
