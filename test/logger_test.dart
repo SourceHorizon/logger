@@ -10,12 +10,12 @@ typedef PrinterCallback = List<String> Function(
   StackTrace? stackTrace,
 );
 
-class _AlwaysFilter extends LogFilter {
+class AlwaysFilter extends LogFilter {
   @override
   bool shouldLog(LogEvent event) => true;
 }
 
-class _NeverFilter extends LogFilter {
+class NeverFilter extends LogFilter {
   @override
   bool shouldLog(LogEvent event) => false;
 }
@@ -107,12 +107,12 @@ void main() {
   });
 
   test('Logger.log', () {
-    var logger = Logger(filter: _NeverFilter(), printer: callbackPrinter);
+    var logger = Logger(filter: NeverFilter(), printer: callbackPrinter);
     logger.log(Level.debug, 'Some message');
 
     expect(printedMessage, null);
 
-    logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    logger = Logger(filter: AlwaysFilter(), printer: callbackPrinter);
 
     var levels = [
       Level.trace,
@@ -170,7 +170,7 @@ void main() {
   });
 
   test('Logger.t', () {
-    var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    var logger = Logger(filter: AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;
     logger.t('Test', error: 'Error', stackTrace: stackTrace);
     expect(printedLevel, Level.trace);
@@ -180,7 +180,7 @@ void main() {
   });
 
   test('Logger.d', () {
-    var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    var logger = Logger(filter: AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;
     logger.d('Test', error: 'Error', stackTrace: stackTrace);
     expect(printedLevel, Level.debug);
@@ -190,7 +190,7 @@ void main() {
   });
 
   test('Logger.i', () {
-    var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    var logger = Logger(filter: AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;
     logger.i('Test', error: 'Error', stackTrace: stackTrace);
     expect(printedLevel, Level.info);
@@ -200,7 +200,7 @@ void main() {
   });
 
   test('Logger.w', () {
-    var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    var logger = Logger(filter: AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;
     logger.w('Test', error: 'Error', stackTrace: stackTrace);
     expect(printedLevel, Level.warning);
@@ -210,7 +210,7 @@ void main() {
   });
 
   test('Logger.e', () {
-    var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    var logger = Logger(filter: AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;
     logger.e('Test', error: 'Error', stackTrace: stackTrace);
     expect(printedLevel, Level.error);
@@ -220,7 +220,7 @@ void main() {
   });
 
   test('Logger.f', () {
-    var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    var logger = Logger(filter: AlwaysFilter(), printer: callbackPrinter);
     var stackTrace = StackTrace.current;
     logger.f('Test', error: 'Error', stackTrace: stackTrace);
     expect(printedLevel, Level.fatal);
@@ -232,7 +232,7 @@ void main() {
   test('Deal with function messages', () {
     final heavyComputation = 'heavily computed very pretty Message';
 
-    var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);
+    var logger = Logger(filter: AlwaysFilter(), printer: callbackPrinter);
     logger.f(() => heavyComputation);
     expect(printedMessage, heavyComputation);
   });
