@@ -26,9 +26,9 @@ class Logger {
   /// The current default implementation of log output.
   static LogOutput Function() defaultOutput = () => ConsoleOutput();
 
-  static final Set<LogCallback> _logCallbacks = {};
+  static final Set<LogCallback> _globalLogCallbacks = {};
 
-  static final Set<OutputCallback> _outputCallbacks = {};
+  static final Set<OutputCallback> _globalOutputCallbacks = {};
 
   late final Future<void> _initialization;
 
@@ -188,7 +188,7 @@ class Logger {
       error: error,
       stackTrace: stackTrace,
     );
-    for (var callback in _logCallbacks) {
+    for (var callback in _globalLogCallbacks) {
       callback(logEvent);
     }
 
@@ -203,7 +203,7 @@ class Logger {
         // Issues with log output should NOT influence
         // the main software behavior.
         try {
-          for (var callback in _outputCallbacks) {
+          for (var callback in _globalOutputCallbacks) {
             callback(outputEvent);
           }
           _output.output(outputEvent);
@@ -227,27 +227,27 @@ class Logger {
     await _output.destroy();
   }
 
-  /// Register a [LogCallback] which is called for each new [LogEvent].
-  static void addLogListener(LogCallback callback) {
-    _logCallbacks.add(callback);
+  /// Register a global [LogCallback] which is called for each new [LogEvent] on each logger.
+  static void addGlobalLogListener(LogCallback callback) {
+    _globalLogCallbacks.add(callback);
   }
 
-  /// Removes a [LogCallback] which was previously registered.
+  /// Removes a global [LogCallback] which was previously registered.
   ///
   /// Returns whether the callback was successfully removed.
-  static bool removeLogListener(LogCallback callback) {
-    return _logCallbacks.remove(callback);
+  static bool removeGlobalLogListener(LogCallback callback) {
+    return _globalLogCallbacks.remove(callback);
   }
 
-  /// Register an [OutputCallback] which is called for each new [OutputEvent].
-  static void addOutputListener(OutputCallback callback) {
-    _outputCallbacks.add(callback);
+  /// Register a global [OutputCallback] which is called for each new [OutputEvent] on each logger.
+  static void addGlobalOutputListener(OutputCallback callback) {
+    _globalOutputCallbacks.add(callback);
   }
 
-  /// Removes a [OutputCallback] which was previously registered.
+  /// Removes a global [OutputCallback] which was previously registered.
   ///
   /// Returns whether the callback was successfully removed.
-  static void removeOutputListener(OutputCallback callback) {
-    _outputCallbacks.remove(callback);
+  static bool removeGlobalOutputListener(OutputCallback callback) {
+    return _globalOutputCallbacks.remove(callback);
   }
 }
