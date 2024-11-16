@@ -1,3 +1,9 @@
+## 2.5.0
+
+- AdvancedFileOutput: Added support for custom `fileUpdateDuration`. Thanks to
+  @shlowdy ([#86](https://github.com/SourceHorizon/logger/pull/86)).
+- README: Fixed outdated LogOutput documentation.
+
 ## 2.4.0
 
 - Added pub.dev `topics`. Thanks to
