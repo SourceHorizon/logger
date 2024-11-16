@@ -175,7 +175,12 @@ class ConsoleOutput extends LogOutput {
 }
 ```
 
-Possible future `LogOutput`s could send to a file, firebase or to Logcat. Feel free to open pull
+Other provided `LogOutput`s are:
+
+* `FileOutput`/`AdvancedFileOutput`
+* `StreamOutput`
+
+Possible future `LogOutput`s could send to Firebase or to Logcat. Feel free to open pull
 requests.
 
 # Acknowledgments
