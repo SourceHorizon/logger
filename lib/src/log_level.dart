@@ -21,11 +21,11 @@ enum Level {
 
   const Level(this.value);
 
-  bool operator <(Level other) => index < other.index;
+  bool operator <(Level other) => value < other.value;
 
-  bool operator <=(Level other) => index <= other.index;
+  bool operator <=(Level other) => value <= other.value;
 
-  bool operator >(Level other) => index > other.index;
+  bool operator >(Level other) => value > other.value;
 
-  bool operator >=(Level other) => index >= other.index;
+  bool operator >=(Level other) => value >= other.value;
 }

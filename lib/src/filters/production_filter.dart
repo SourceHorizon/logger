@@ -5,6 +5,6 @@ import '../log_filter.dart';
 class ProductionFilter extends LogFilter {
   @override
   bool shouldLog(LogEvent event) {
-    return event.level.value >= level!.value;
+    return event.level >= level!;
   }
 }
