@@ -20,4 +20,12 @@ enum Level {
   final int value;
 
   const Level(this.value);
+
+  bool operator <(Level other) => value < other.value;
+
+  bool operator <=(Level other) => value <= other.value;
+
+  bool operator >(Level other) => value > other.value;
+
+  bool operator >=(Level other) => value >= other.value;
 }

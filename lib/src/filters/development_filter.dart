@@ -10,7 +10,7 @@ class DevelopmentFilter extends LogFilter {
   bool shouldLog(LogEvent event) {
     var shouldLog = false;
     assert(() {
-      if (event.level.value >= level!.value) {
+      if (event.level >= level!) {
         shouldLog = true;
       }
       return true;
