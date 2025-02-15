@@ -32,7 +32,7 @@ class SimplePrinter extends LogPrinter {
   final bool colors;
 
   SimplePrinter({
-    super.dateTimeFormat = DateTimeFormat.none,
+    super.dateTimeFormat = DateTimeFormat.iso8601,
     this.colors = true,
   });
 
