@@ -20,17 +20,15 @@ class PrefixPrinter extends LogPrinter {
     this._realPrinter, {
     String? debug,
     String? trace,
-    @Deprecated('[verbose] is being deprecated in favor of [trace].') verbose,
     String? fatal,
-    @Deprecated('[wtf] is being deprecated in favor of [fatal].') wtf,
     String? info,
     String? warning,
     String? error,
   }) {
     _prefixMap = {
       Level.debug: debug ?? 'DEBUG',
-      Level.trace: trace ?? verbose ?? 'TRACE',
-      Level.fatal: fatal ?? wtf ?? 'FATAL',
+      Level.trace: trace ?? 'TRACE',
+      Level.fatal: fatal ?? 'FATAL',
       Level.info: info ?? 'INFO',
       Level.warning: warning ?? 'WARNING',
       Level.error: error ?? 'ERROR',

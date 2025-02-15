@@ -81,18 +81,6 @@ class Logger {
 
   LogOutput get output => _output;
 
-  /// Log a message at level [Level.verbose].
-  @Deprecated(
-      "[Level.verbose] is being deprecated in favor of [Level.trace], use [t] instead.")
-  void v(
-    Object? message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
-    t(message, time: time, error: error, stackTrace: stackTrace);
-  }
-
   /// Log a message at level [Level.trace].
   void t(
     Object? message, {
@@ -144,18 +132,6 @@ class Logger {
     log(Level.error, message, time: time, error: error, stackTrace: stackTrace);
   }
 
-  /// Log a message at level [Level.wtf].
-  @Deprecated(
-      "[Level.wtf] is being deprecated in favor of [Level.fatal], use [f] instead.")
-  void wtf(
-    Object? message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
-    f(message, time: time, error: error, stackTrace: stackTrace);
-  }
-
   /// Log a message at level [Level.fatal].
   void f(
     Object? message, {
@@ -180,8 +156,7 @@ class Logger {
       throw ArgumentError('Error parameter cannot take a StackTrace!');
     } else if (level == Level.all) {
       throw ArgumentError('Log events cannot have Level.all');
-      // ignore: deprecated_member_use_from_same_package
-    } else if (level == Level.off || level == Level.nothing) {
+    } else if (level == Level.off) {
       throw ArgumentError('Log events cannot have Level.off');
     }
 

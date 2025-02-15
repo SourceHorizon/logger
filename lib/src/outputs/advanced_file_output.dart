@@ -78,11 +78,9 @@ class AdvancedFileOutput extends LogOutput {
         _fileNameFormatter = fileNameFormatter ?? _defaultFileNameFormat,
         _writeImmediately = writeImmediately ??
             [
-              Level.error,
               Level.fatal,
+              Level.error,
               Level.warning,
-              // ignore: deprecated_member_use_from_same_package
-              Level.wtf,
             ],
         _maxRotatedFilesCount = maxRotatedFilesCount,
         _fileSorter = fileSorter ?? _defaultFileSorter,
