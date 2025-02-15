@@ -97,8 +97,8 @@ abstract class LogPrinter {
     this.dateTimeFormat = DateTimeFormat.none,
     this.stackTraceBeginIndex = 0,
     this.excludePaths = const [],
-    this.methodCount = 2,
-    this.errorMethodCount = 8,
+    this.methodCount = 0,
+    this.errorMethodCount = 30,
   });
 
   Future<void> init() async {}

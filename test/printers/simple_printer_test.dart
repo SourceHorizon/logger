@@ -38,13 +38,13 @@ void main() {
   });
 
   test('print time', () {
-    var printer = SimplePrinter(dateTimeFormat: DateTimeFormat.iso8601);
+    var printer = SimplePrinter();
 
     expect(printer.log(event)[0], contains('TIME'));
   });
 
   test('does not print time', () {
-    var printer = SimplePrinter();
+    var printer = SimplePrinter(dateTimeFormat: DateTimeFormat.none);
 
     expect(printer.log(event)[0], isNot(contains('TIME')));
   });

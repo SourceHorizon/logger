@@ -1,4 +1,5 @@
 import '../ansi_color.dart';
+import '../date_time_format.dart';
 import '../log_event.dart';
 import '../log_level.dart';
 import '../log_printer.dart';
@@ -112,7 +113,7 @@ class PrettyPrinter extends LogPrinter {
     this.lineLength = 120,
     this.colors = true,
     this.printEmojis = true,
-    super.dateTimeFormat,
+    super.dateTimeFormat = DateTimeFormat.onlyTimeAndSinceStart,
     this.excludeBox = const {},
     this.noBoxingByDefault = false,
     super.excludePaths,
