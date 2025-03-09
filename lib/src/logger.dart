@@ -81,7 +81,9 @@ class Logger {
 
   LogOutput get output => _output;
 
-  /// Log a message at level [Level.trace].
+  /// Logs a message at level [Level.trace].
+  ///
+  /// {@macro log.parameters}
   void t(
     Object? message, {
     DateTime? time,
@@ -91,7 +93,9 @@ class Logger {
     log(Level.trace, message, time: time, error: error, stackTrace: stackTrace);
   }
 
-  /// Log a message at level [Level.debug].
+  /// Logs a message at level [Level.debug].
+  ///
+  /// {@macro log.parameters}
   void d(
     Object? message, {
     DateTime? time,
@@ -101,7 +105,9 @@ class Logger {
     log(Level.debug, message, time: time, error: error, stackTrace: stackTrace);
   }
 
-  /// Log a message at level [Level.info].
+  /// Logs a message at level [Level.info].
+  ///
+  /// {@macro log.parameters}
   void i(
     Object? message, {
     DateTime? time,
@@ -111,7 +117,9 @@ class Logger {
     log(Level.info, message, time: time, error: error, stackTrace: stackTrace);
   }
 
-  /// Log a message at level [Level.warning].
+  /// Logs a message at level [Level.warning].
+  ///
+  /// {@macro log.parameters}
   void w(
     Object? message, {
     DateTime? time,
@@ -122,7 +130,9 @@ class Logger {
         time: time, error: error, stackTrace: stackTrace);
   }
 
-  /// Log a message at level [Level.error].
+  /// Logs a message at level [Level.error].
+  ///
+  /// {@macro log.parameters}
   void e(
     Object? message, {
     DateTime? time,
@@ -132,7 +142,9 @@ class Logger {
     log(Level.error, message, time: time, error: error, stackTrace: stackTrace);
   }
 
-  /// Log a message at level [Level.fatal].
+  /// Logs a message at level [Level.fatal].
+  ///
+  /// {@macro log.parameters}
   void f(
     Object? message, {
     DateTime? time,
@@ -142,7 +154,14 @@ class Logger {
     log(Level.fatal, message, time: time, error: error, stackTrace: stackTrace);
   }
 
-  /// Log a message with [level].
+  /// Logs a message with [level].
+  ///
+  /// {@template log.parameters}
+  /// [message] can be a [String], [Iterable], [Map] or even a [Function]
+  /// to lazily evaluate the log statement.
+  ///
+  /// In case no [time] is provided, it defaults to [DateTime.now()].
+  /// {@endtemplate}
   void log(
     Level level,
     Object? message, {
