@@ -176,7 +176,15 @@
 * Remove buffer field
 * Update library structure (thanks @marcgraub!)
 
+## 0.7.0+2
+
+* Remove screenshot
+
 ## 0.7.0+1
+
+* Fix pedantic
+
+## 0.7.0
 
 * Added `ProductionFilter`, `FileOutput`, `MemoryOutput`, `SimplePrinter`
 * Breaking: Changed `LogFilter`, `LogPrinter` and `LogOutput`
