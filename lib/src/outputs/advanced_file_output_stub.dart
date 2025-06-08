@@ -52,10 +52,17 @@ class AdvancedFileOutput extends LogOutput {
   /// The [latestFileName] will not be counted. The default [fileSorter] strategy is
   /// sorting by last modified date, beware that could be not reliable in some
   /// platforms and/or filesystems.
+  ///
+  /// [fileHeader] and [fileFooter] can be used to respectively add a header
+  /// or footer to the file when opening/closing the file sink.
+  /// (Please note that this happens not only when files are rotated but also
+  /// on every start and shutdown of your application!)
   AdvancedFileOutput({
     required String path,
     bool overrideExisting = false,
     Encoding encoding = utf8,
+    String? fileHeader,
+    String? fileFooter,
     List<Level>? writeImmediately,
     Duration maxDelay = const Duration(seconds: 2),
     int maxBufferSize = 2000,

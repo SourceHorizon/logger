@@ -154,6 +154,32 @@ void main() {
     expect(await rotatedFile.readAsString(), contains("2"));
   });
 
+  test('Rolling files with header/footer', () async {
+    const fileHeader = "TEST-HEADER";
+    const fileFooter = "TEST-FOOTER";
+
+    var output = AdvancedFileOutput(
+      path: dir.path,
+      maxFileSizeKB: 1,
+      maxRotatedFilesCount: 1,
+      fileHeader: fileHeader,
+      fileFooter: fileFooter,
+    );
+
+    await output.init();
+    final event0 =
+        OutputEvent(LogEvent(Level.fatal, ""), ["Header and Footer Test"]);
+    output.output(event0);
+    await output.destroy();
+
+    // Give the OS a chance to flush to the file system (should reduce flakiness)
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    final latestFile = File('${dir.path}/latest.log');
+    expect(await latestFile.readAsString(), startsWith(fileHeader));
+    expect(await latestFile.readAsString(), endsWith("$fileFooter\n"));
+  });
+
   test('Rolling files with custom file sorter', () async {
     var output = AdvancedFileOutput(
       path: dir.path,

@@ -57,10 +57,17 @@ class AdvancedFileOutput extends LogOutput {
   /// The [latestFileName] will not be counted. The default [fileSorter] strategy is
   /// sorting by last modified date, beware that could be not reliable in some
   /// platforms and/or filesystems.
+  ///
+  /// [fileHeader] and [fileFooter] can be used to respectively add a header
+  /// or footer to the file when opening/closing the file sink.
+  /// (Please note that this happens not only when files are rotated but also
+  /// on every start and shutdown of your application!)
   AdvancedFileOutput({
     required String path,
     bool overrideExisting = false,
     Encoding encoding = utf8,
+    this.fileHeader,
+    this.fileFooter,
     List<Level>? writeImmediately,
     Duration maxDelay = const Duration(seconds: 2),
     int maxBufferSize = 2000,
@@ -95,6 +102,9 @@ class AdvancedFileOutput extends LogOutput {
 
   final bool _overrideExisting;
   final Encoding _encoding;
+
+  String? fileHeader;
+  String? fileFooter;
 
   final List<Level> _writeImmediately;
   final Duration _maxDelay;
@@ -200,9 +210,17 @@ class AdvancedFileOutput extends LogOutput {
       mode: _overrideExisting ? FileMode.writeOnly : FileMode.writeOnlyAppend,
       encoding: _encoding,
     );
+
+    if (fileHeader != null) {
+      _sink?.writeln(fileHeader);
+    }
   }
 
   Future<void> _closeSink() async {
+    if (fileFooter != null) {
+      _sink?.writeln(fileFooter);
+    }
+
     await _sink?.flush();
     await _sink?.close();
     _sink = null; // Explicitly set null until assigned again
