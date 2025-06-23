@@ -1,3 +1,10 @@
+## 2.6.0
+
+* Added log level comparison operators. Thanks to
+  @busslina ([#90](https://github.com/SourceHorizon/logger/pull/90)).
+* AdvancedFileOutput: Added `fileHeader` and `fileFooter` options.
+  Closes [#97](https://github.com/SourceHorizon/logger/issues/97).
+
 ## 2.5.0
 
 * AdvancedFileOutput: Added support for custom `fileUpdateDuration`. Thanks to
