@@ -221,9 +221,11 @@ class AdvancedFileOutput extends LogOutput {
       _sink?.writeln(fileFooter);
     }
 
-    await _sink?.flush();
-    await _sink?.close();
-    _sink = null; // Explicitly set null until assigned again
+    final sink = _sink;
+    _sink = null; // disable writing in flushBuffer
+
+    await sink?.flush();
+    await sink?.close();
   }
 
   Future<void> _deleteRotatedFiles() async {
