@@ -1,3 +1,8 @@
+## 2.6.1
+
+* AdvancedFileOutput: Fixed race condition while flushing the buffer (`StateError`).
+  Closes [#99](https://github.com/SourceHorizon/logger/issues/99), thanks to @sap1tz.
+
 ## 2.6.0
 
 * Added log level comparison operators. Thanks to
