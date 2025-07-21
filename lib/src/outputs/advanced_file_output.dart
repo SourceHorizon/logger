@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:meta/meta.dart';
+
 import '../log_level.dart';
 import '../log_output.dart';
 import '../output_event.dart';
@@ -94,8 +96,9 @@ class AdvancedFileOutput extends LogOutput {
             ],
         _maxRotatedFilesCount = maxRotatedFilesCount,
         _fileSorter = fileSorter ?? _defaultFileSorter,
-        _fileUpdateDuration = fileUpdateDuration,
-        _file = maxFileSizeKB > 0 ? File('$path/$latestFileName') : File(path);
+        _fileUpdateDuration = fileUpdateDuration {
+    _file = createFile(maxFileSizeKB > 0 ? '$path/$latestFileName' : path);
+  }
 
   /// Logs directory path by default, particular log file path if [_maxFileSizeKB] is 0.
   final String _path;
@@ -115,7 +118,7 @@ class AdvancedFileOutput extends LogOutput {
   final Comparator<File> _fileSorter;
   final Duration _fileUpdateDuration;
 
-  final File _file;
+  late final File _file;
   IOSink? _sink;
   Timer? _bufferFlushTimer;
   Timer? _targetFileUpdater;
@@ -142,14 +145,18 @@ class AdvancedFileOutput extends LogOutput {
     return a.lastModifiedSync().compareTo(b.lastModifiedSync());
   }
 
+  @protected
+  File createFile(String path) {
+    return File(path);
+  }
+
   @override
   Future<void> init() async {
     if (_rotatingFilesMode) {
-      final dir = Directory(_path);
       // We use sync directory check to avoid losing potential initial boot logs
       // in early crash scenarios.
-      if (!dir.existsSync()) {
-        dir.createSync(recursive: true);
+      if (!_file.parent.existsSync()) {
+        _file.parent.createSync(recursive: true);
       }
 
       _targetFileUpdater = Timer.periodic(
@@ -232,8 +239,7 @@ class AdvancedFileOutput extends LogOutput {
     // If maxRotatedFilesCount is not set, keep all files
     if (_maxRotatedFilesCount == null) return;
 
-    final dir = Directory(_path);
-    final files = dir
+    final files = _file.parent
         .listSync()
         .whereType<File>()
         // Filter out the latest file

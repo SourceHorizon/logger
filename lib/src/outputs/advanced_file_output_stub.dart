@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:meta/meta.dart';
+
 import '../log_level.dart';
 import '../log_output.dart';
 import '../output_event.dart';
@@ -73,6 +75,11 @@ class AdvancedFileOutput extends LogOutput {
     Comparator<File>? fileSorter,
     Duration fileUpdateDuration = const Duration(minutes: 1),
   }) {
+    throw UnsupportedError("Not supported on this platform.");
+  }
+
+  @protected
+  File createFile(String path) {
     throw UnsupportedError("Not supported on this platform.");
   }
 
