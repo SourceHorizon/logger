@@ -87,4 +87,9 @@ class AdvancedFileOutput extends LogOutput {
   void output(OutputEvent event) {
     throw UnsupportedError("Not supported on this platform.");
   }
+
+  /// Clears the log file. Removes all rotated log files as well.
+  Future<void> clearLog() async {
+    throw UnsupportedError("Not supported on this platform.");
+  }
 }
