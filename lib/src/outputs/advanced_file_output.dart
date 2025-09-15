@@ -275,4 +275,28 @@ class AdvancedFileOutput extends LogOutput {
     }
     await _closeSink();
   }
+
+  /// Returns the current log file.
+  File getFile() {
+    return _file;
+  }
+
+  /// Returns list of log files (latest and rotated) up to the limit.
+  List<File> getFiles() {
+    // only the latest file
+    if (_maxRotatedFilesCount == null) return [_file];
+
+    final files = _file.parent
+        .listSync()
+        .whereType<File>()
+        .toList();
+
+    // If the number of files is less than the limit, return all files
+    if (files.length <= _maxRotatedFilesCount!) return files;
+
+    // return only the latest files (not to be deleted)
+    files.sort(_fileSorter);
+    return files.sublist(files.length - _maxRotatedFilesCount!);
+  }
+
 }
