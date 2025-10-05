@@ -1,3 +1,9 @@
+## 2.6.2
+
+* PrettyPrinter: Fixed the showing of internal `package:logger` log lines in the stack trace on Flutter/Dart Web.
+  Closes [#102](https://github.com/SourceHorizon/logger/issues/102).
+* Lowered the `meta` package version requirement.
+
 ## 2.6.1
 
 * AdvancedFileOutput: Fixed race condition while flushing the buffer (`StateError`).
