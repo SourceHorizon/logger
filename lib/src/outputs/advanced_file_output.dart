@@ -121,6 +121,8 @@ class AdvancedFileOutput extends LogOutput {
   Timer? _bufferFlushTimer;
   Timer? _targetFileUpdater;
 
+  bool isClosingSink;
+
   final List<OutputEvent> _buffer = [];
 
   bool get _rotatingFilesMode => _maxFileSizeKB > 0;
@@ -183,7 +185,7 @@ class AdvancedFileOutput extends LogOutput {
   }
 
   void _flushBuffer() {
-    if (_sink == null) return; // Wait until _sink becomes available
+    if (_sink == null || isClosingSink) return; // Wait until _sink becomes available
     for (final event in _buffer) {
       _sink?.writeAll(event.lines, Platform.isWindows ? '\r\n' : '\n');
       _sink?.writeln();
@@ -192,6 +194,7 @@ class AdvancedFileOutput extends LogOutput {
   }
 
   Future<void> _updateTargetFile() async {
+    if (isClosingSink) return; // if we are already closing, do nothing, because other functions will reopen the sink
     try {
       if (await _file.exists() &&
           await _file.length() > _maxFileSizeKB * 1024) {
@@ -205,8 +208,10 @@ class AdvancedFileOutput extends LogOutput {
       print(e);
       print(s);
       // Try creating another file and working with it
-      await _closeSink();
-      await _openSink();
+      if (!isClosingSink) {
+        await _closeSink();
+        await _openSink();
+      }
     }
   }
 
@@ -222,15 +227,23 @@ class AdvancedFileOutput extends LogOutput {
   }
 
   Future<void> _closeSink() async {
-    if (fileFooter != null) {
-      _sink?.writeln(fileFooter);
+    isClosingSink = true;
+    try {
+      if (fileFooter != null) {
+        _sink?.writeln(fileFooter);
+      }
+
+      final sink = _sink;
+      _sink = null; // disable writing in flushBuffer
+
+      await sink?.flush();
+      await sink?.close();
+    } catch (e, s) {
+      print('Failed to close sink: $e');
+      print(s);
+    } finally {
+      isClosingSink = false;
     }
-
-    final sink = _sink;
-    _sink = null; // disable writing in flushBuffer
-
-    await sink?.flush();
-    await sink?.close();
   }
 
   Future<void> _deleteRotatedFiles() async {
