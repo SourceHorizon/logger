@@ -1,6 +1,6 @@
 name: logger
 description: Small, easy to use and extensible logger which prints beautiful logs.
-version: 2.6.1
+version: 2.6.2
 repository: https://github.com/SourceHorizon/logger
 
 topics:
@@ -11,7 +11,7 @@ environment:
   sdk: ">=2.17.0 <4.0.0"
 
 dependencies:
-  meta: ^1.16.0
+  meta: ^1.0.0
 
 dev_dependencies:
   test: ^1.16.8
