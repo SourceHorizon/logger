@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:clock/clock.dart';
+import 'package:fake_async/fake_async.dart';
 import 'package:logger/logger.dart';
 import 'package:test/test.dart';
 
@@ -9,6 +11,17 @@ typedef PrinterCallback = List<String> Function(
   Object? error,
   StackTrace? stackTrace,
 );
+
+/// Filter that logs all events and also preserves the last event.
+class EventPreservingFilter extends LogFilter {
+  LogEvent? lastEvent;
+
+  @override
+  bool shouldLog(LogEvent event) {
+    lastEvent = event;
+    return true;
+  }
+}
 
 class _AlwaysFilter extends LogFilter {
   @override
@@ -66,6 +79,18 @@ class _AsyncPrinter extends LogPrinter {
 
   @override
   List<String> log(LogEvent event) => [event.message.toString()];
+}
+
+class TimedLogPrinter extends LogPrinter {
+  DateTime? lastEventPrintingTime;
+
+  @override
+  List<String> log(LogEvent event) {
+    lastEventPrintingTime = clock.now();
+    // time is formatted via toString to avoid adding a dependency
+    // on intl
+    return ['${event.time.toString()} | ${event.message}'];
+  }
 }
 
 class _AsyncOutput extends LogOutput {
@@ -324,4 +349,42 @@ void main() {
     await logger.init;
     expect(comp.initialized, true);
   });
+
+  test(
+    'Events logged inside of different zones report its clock time by default',
+    () {
+      const elapseDuration = Duration(milliseconds: 1234);
+
+      final filter = EventPreservingFilter();
+      final printer = TimedLogPrinter();
+      final logger = Logger(filter: filter, printer: printer);
+
+      var eventIndex = 1;
+
+      logger.d("Logging within a default fake_async zone clock:");
+      // regular fake_async invocation where clock is automatically injected
+      // into the zone with the current real time
+      fakeAsync((async) {
+        for (eventIndex = 1; eventIndex <= 5; eventIndex++) {
+          async.elapse(elapseDuration);
+          logger.i('\tEvent $eventIndex, now: ${clock.now()}');
+          expect(filter.lastEvent?.time, clock.now());
+        }
+      });
+
+      logger.d("Logging within a fixed initial time zone clock:");
+      // now provide initialTime manually so that the clock starts at a fixed
+      // point in the pasts
+      fakeAsync(
+        (async) {
+          for (eventIndex = 1; eventIndex <= 5; eventIndex++) {
+            async.elapse(elapseDuration);
+            logger.i('\tEvent $eventIndex, now: ${clock.now()}');
+            expect(filter.lastEvent?.time, clock.now());
+          }
+        },
+        initialTime: DateTime.fromMicrosecondsSinceEpoch(0),
+      );
+    },
+  );
 }
