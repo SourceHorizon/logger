@@ -1,3 +1,5 @@
+import 'package:clock/clock.dart';
+
 import 'log_level.dart';
 
 class LogEvent {
@@ -15,5 +17,5 @@ class LogEvent {
     DateTime? time,
     this.error,
     this.stackTrace,
-  }) : time = time ?? DateTime.now();
+  }) : time = time ?? clock.now();
 }
