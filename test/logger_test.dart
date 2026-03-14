@@ -13,7 +13,7 @@ typedef PrinterCallback = List<String> Function(
 );
 
 /// Filter that logs all events and also preserves the last event.
-class EventPreservingFilter extends LogFilter {
+class _EventPreservingFilter extends LogFilter {
   LogEvent? lastEvent;
 
   @override
@@ -81,12 +81,13 @@ class _AsyncPrinter extends LogPrinter {
   List<String> log(LogEvent event) => [event.message.toString()];
 }
 
-class TimedLogPrinter extends LogPrinter {
-  DateTime? lastEventPrintingTime;
+/// Printer that captures the time of the last event it printed.
+class _TimedLogPrinter extends LogPrinter {
+  DateTime? lastEventTime;
 
   @override
   List<String> log(LogEvent event) {
-    lastEventPrintingTime = clock.now();
+    lastEventTime = clock.now();
     // time is formatted via toString to avoid adding a dependency
     // on intl
     return ['${event.time.toString()} | ${event.message}'];
@@ -352,16 +353,16 @@ void main() {
 
   test(
     'Events logged inside of different zones report its clock time by default',
-    () {
-      const elapseDuration = Duration(milliseconds: 1234);
+    () async {
+      const elapseDuration = Duration(milliseconds: 25);
 
-      final filter = EventPreservingFilter();
-      final printer = TimedLogPrinter();
+      final filter = _EventPreservingFilter();
+      final printer = _TimedLogPrinter();
       final logger = Logger(filter: filter, printer: printer);
 
       var eventIndex = 1;
 
-      logger.d("Logging within a default fake_async zone clock:");
+      logger.d("Logging with a default fake_async zone clock:");
       // regular fake_async invocation where clock is automatically injected
       // into the zone with the current real time
       fakeAsync((async) {
@@ -372,7 +373,23 @@ void main() {
         }
       });
 
-      logger.d("Logging within a fixed initial time zone clock:");
+      logger.d("Logging with a regular zone clock:");
+      for (eventIndex = 1; eventIndex <= 5; eventIndex++) {
+        await Future.delayed(elapseDuration);
+        final timestamp = DateTime.now();
+
+        // do not pass `time: timestamp` here since we want to verify
+        // default event time behavior
+        logger.i('\tEvent $eventIndex, now: ${DateTime.now()}');
+
+        // there is no way to capture the exact default time of the event
+        // creation, but we can be sure that it is after the time right
+        // before logging and before the time of printer work
+        expect(filter.lastEvent?.time.isAfter(timestamp), isTrue);
+        expect(printer.lastEventTime?.isAfter(timestamp), isTrue);
+      }
+
+      logger.d("Logging with a fixed initial time zone clock:");
       // now provide initialTime manually so that the clock starts at a fixed
       // point in the pasts
       fakeAsync(
