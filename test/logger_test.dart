@@ -15,9 +15,11 @@ typedef PrinterCallback = List<String> Function(
 /// Filter that logs all events and also preserves the last event.
 class _EventPreservingFilter extends LogFilter {
   LogEvent? lastEvent;
+  DateTime? lastEventTime;
 
   @override
   bool shouldLog(LogEvent event) {
+    lastEventTime = clock.now();
     lastEvent = event;
     return true;
   }
@@ -83,11 +85,8 @@ class _AsyncPrinter extends LogPrinter {
 
 /// Printer that captures the time of the last event it printed.
 class _TimedLogPrinter extends LogPrinter {
-  DateTime? lastEventTime;
-
   @override
   List<String> log(LogEvent event) {
-    lastEventTime = clock.now();
     // time is formatted via toString to avoid adding a dependency
     // on intl
     return ['${event.time.toString()} | ${event.message}'];
@@ -382,11 +381,11 @@ void main() {
         // default event time behavior
         logger.i('\tEvent $eventIndex, now: ${DateTime.now()}');
 
-        // there is no way to capture the exact default time of the event
-        // creation, but we can be sure that it is after the time right
-        // before logging and before the time of printer work
-        expect(filter.lastEvent?.time.isAfter(timestamp), isTrue);
-        expect(printer.lastEventTime?.isAfter(timestamp), isTrue);
+        // there is no way to capture the exact time of created event, but we
+        // can be sure that it is after the time right before logging and
+        // before the time of printer work
+        expect(timestamp.isBefore(filter.lastEvent!.time), isTrue);
+        expect(filter.lastEventTime?.isAfter(timestamp), isTrue);
       }
 
       logger.d("Logging with a fixed initial time zone clock:");
