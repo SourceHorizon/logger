@@ -156,13 +156,6 @@ class Logger {
   void log(
     Level level,
     dynamic message, {
-
-    /// The time of origin for this event. If not provided, current time will
-    /// be used.
-    /// 
-    /// Note that current time is retrieved via the [clock] package by default,
-    /// which allows to report correct zone time when invoked in a zone with a
-    /// fake clock.
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,

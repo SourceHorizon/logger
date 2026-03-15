@@ -9,6 +9,8 @@ class LogEvent {
   final StackTrace? stackTrace;
 
   /// Time when this log was created.
+  ///
+  /// If not provided, the current time will be used.
   final DateTime time;
 
   LogEvent(
