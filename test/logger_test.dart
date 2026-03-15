@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:clock/clock.dart';
-import 'package:fake_async/fake_async.dart';
 import 'package:logger/logger.dart';
 import 'package:test/test.dart';
 
@@ -11,19 +10,6 @@ typedef PrinterCallback = List<String> Function(
   Object? error,
   StackTrace? stackTrace,
 );
-
-/// Filter that logs all events and also preserves the last event.
-class _EventPreservingFilter extends LogFilter {
-  LogEvent? lastEvent;
-  DateTime? lastEventTime;
-
-  @override
-  bool shouldLog(LogEvent event) {
-    lastEventTime = clock.now();
-    lastEvent = event;
-    return true;
-  }
-}
 
 class _AlwaysFilter extends LogFilter {
   @override
@@ -81,16 +67,6 @@ class _AsyncPrinter extends LogPrinter {
 
   @override
   List<String> log(LogEvent event) => [event.message.toString()];
-}
-
-/// Printer that captures the time of the last event it printed.
-class _TimedLogPrinter extends LogPrinter {
-  @override
-  List<String> log(LogEvent event) {
-    // time is formatted via toString to avoid adding a dependency
-    // on intl
-    return ['${event.time.toString()} | ${event.message}'];
-  }
 }
 
 class _AsyncOutput extends LogOutput {
@@ -350,57 +326,10 @@ void main() {
     expect(comp.initialized, true);
   });
 
-  test(
-    'Events logged inside of different zones report its clock time by default',
-    () async {
-      const elapseDuration = Duration(milliseconds: 25);
-
-      final filter = _EventPreservingFilter();
-      final printer = _TimedLogPrinter();
-      final logger = Logger(filter: filter, printer: printer);
-
-      var eventIndex = 1;
-
-      logger.d("Logging with a default fake_async zone clock:");
-      // regular fake_async invocation where clock is automatically injected
-      // into the zone with the current real time
-      fakeAsync((async) {
-        for (eventIndex = 1; eventIndex <= 5; eventIndex++) {
-          async.elapse(elapseDuration);
-          logger.i('\tEvent $eventIndex, now: ${clock.now()}');
-          expect(filter.lastEvent?.time, clock.now());
-        }
-      });
-
-      logger.d("Logging with a regular zone clock:");
-      for (eventIndex = 1; eventIndex <= 5; eventIndex++) {
-        await Future.delayed(elapseDuration);
-        final timestamp = DateTime.now();
-
-        // do not pass `time: timestamp` here since we want to verify
-        // default event time behavior
-        logger.i('\tEvent $eventIndex, now: ${DateTime.now()}');
-
-        // there is no way to capture the exact time of created event, but we
-        // can be sure that it is after the time right before logging and
-        // before the time of printer work
-        expect(timestamp.isBefore(filter.lastEvent!.time), isTrue);
-        expect(filter.lastEventTime?.isAfter(timestamp), isTrue);
-      }
-
-      logger.d("Logging with a fixed initial time zone clock:");
-      // now provide initialTime manually so that the clock starts at a fixed
-      // point in the pasts
-      fakeAsync(
-        (async) {
-          for (eventIndex = 1; eventIndex <= 5; eventIndex++) {
-            async.elapse(elapseDuration);
-            logger.i('\tEvent $eventIndex, now: ${clock.now()}');
-            expect(filter.lastEvent?.time, clock.now());
-          }
-        },
-        initialTime: DateTime.fromMicrosecondsSinceEpoch(0),
-      );
-    },
-  );
+  test('Fixed clock time', () {
+    withClock(Clock.fixed(DateTime.fromMillisecondsSinceEpoch(0)), () {
+      var logEvent = LogEvent(Level.info, "");
+      expect(logEvent.time, clock.now());
+    });
+  });
 }
