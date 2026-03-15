@@ -276,4 +276,51 @@ class AdvancedFileOutput extends LogOutput {
     }
     await _closeSink();
   }
+
+  /// Clears the log file. Removes all rotated log files as well.
+  Future<void> clearLog() async {
+    // immediate flush, delete and recreate the file
+    _flushBuffer();
+    await _closeSink();
+    await _file.delete();
+    await _openSink();
+    // remove all rotated files
+    final files = _file.parent
+        .listSync()
+        .whereType<File>()
+        // Filter out the latest file
+        .where((f) => f.path != _file.path)
+        .toList();
+    for (final file in files) {
+      try {
+        await file.delete();
+      } catch (e, s) {
+        print('Failed to delete file: $e');
+        print(s);
+      }
+    }
+  }
+
+  /// Returns the current log file.
+  File getFile() {
+    return _file;
+  }
+
+  /// Returns list of log files (latest and rotated) up to the limit.
+  List<File> getFiles() {
+    // only the latest file
+    if (_maxRotatedFilesCount == null) return [_file];
+
+    final files = _file.parent
+        .listSync()
+        .whereType<File>()
+        .toList();
+
+    // If the number of files is less than the limit, return all files
+    if (files.length <= _maxRotatedFilesCount!) return files;
+
+    // return only the latest files (not to be deleted)
+    files.sort(_fileSorter);
+    return files.sublist(files.length - _maxRotatedFilesCount!);
+  }
 }
