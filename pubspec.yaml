@@ -12,6 +12,7 @@ environment:
 
 dependencies:
   meta: ^1.0.0
+  clock: ^1.1.0
 
 dev_dependencies:
   test: ^1.16.8

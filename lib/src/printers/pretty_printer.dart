@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:clock/clock.dart';
+
 import '../ansi_color.dart';
 import '../date_time_format.dart';
 import '../log_event.dart';
@@ -214,7 +216,7 @@ class PrettyPrinter extends LogPrinter {
             : (printTime
                 ? DateTimeFormat.onlyTimeAndSinceStart
                 : DateTimeFormat.none) {
-    startTime ??= DateTime.now();
+    startTime ??= clock.now();
 
     var doubleDividerLine = StringBuffer();
     var singleDividerLine = StringBuffer();

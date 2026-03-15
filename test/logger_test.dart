@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:clock/clock.dart';
 import 'package:logger/logger.dart';
 import 'package:test/test.dart';
 
@@ -323,5 +324,12 @@ void main() {
     expect(comp.initialized, false);
     await logger.init;
     expect(comp.initialized, true);
+  });
+
+  test('Fixed clock time', () {
+    withClock(Clock.fixed(DateTime.fromMillisecondsSinceEpoch(0)), () {
+      var logEvent = LogEvent(Level.info, "");
+      expect(logEvent.time, clock.now());
+    });
   });
 }
