@@ -1,7 +1,12 @@
+## 2.7.0
+
+* Use `clock` for getting default log event time. Thanks to
+  @alverone ([#112](https://github.com/SourceHorizon/logger/pull/112)).
+
 ## 2.6.2
 
-* PrettyPrinter: Fixed the showing of internal `package:logger` log lines in the stack trace on Flutter/Dart Web.
-  Closes [#102](https://github.com/SourceHorizon/logger/issues/102).
+* PrettyPrinter: Fixed the showing of internal `package:logger` log lines in the stack trace on
+  Flutter/Dart Web. Closes [#102](https://github.com/SourceHorizon/logger/issues/102).
 * Lowered the `meta` package version requirement.
 
 ## 2.6.1
