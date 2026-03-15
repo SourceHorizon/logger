@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:meta/meta.dart';
 
 import '../log_level.dart';
@@ -199,7 +200,7 @@ class AdvancedFileOutput extends LogOutput {
           await _file.length() > _maxFileSizeKB * 1024) {
         // Rotate the log file
         await _closeSink();
-        await _file.rename('$_path/${_fileNameFormatter(DateTime.now())}');
+        await _file.rename('$_path/${_fileNameFormatter(clock.now())}');
         await _deleteRotatedFiles();
         await _openSink();
       }
