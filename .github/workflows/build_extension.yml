@@ -1,0 +1,57 @@
+name: Build DevTools Extension
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Avoid race conditions if multiple builds for the same branch trigger simultaneously.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # Ensure the bot has permissions to push changes back to the repository.
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Fetch all history to facilitate git push if needed
+          fetch-depth: 0
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: "stable"
+          cache: true
+
+      - name: Install root dependencies
+        run: dart pub get
+
+      - name: Install extension dependencies
+        working-directory: devtool_logger
+        run: flutter pub get
+
+      - name: Build DevTools Extension
+        working-directory: devtool_logger
+        run: dart run devtools_extensions build_and_copy --source=. --dest=../extension/devtools
+
+      - name: Commit and push build artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add extension/devtools/build
+          if git diff --staged --quiet; then
+            echo "No changes in build artifacts"
+          else
+            git commit -m "chore: update DevTools extension build artifacts [skip ci]"
+            git push origin main
+          fi

@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'filters/development_filter.dart';
 import 'log_event.dart';
 import 'log_filter.dart';
@@ -183,6 +185,7 @@ class Logger {
     }
 
     if (_filter.shouldLog(logEvent)) {
+      developer.postEvent('ext.devtool_logger.log', logEvent.toJson());
       var output = _printer.log(logEvent);
 
       if (output.isNotEmpty) {

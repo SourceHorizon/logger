@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 
-import '../models/log_entry.dart';
-
 /// A widget to display a single log entry.
 class LogItem extends StatelessWidget {
-  final LogEntry log;
+  final LogEvent log;
 
   const LogItem({super.key, required this.log});
 
@@ -96,7 +94,7 @@ class LogItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     SelectableText(
-                      log.error!,
+                      log.error.toString(),
                       style: GoogleFonts.firaCode(
                         fontSize: 12,
                         color: colorScheme.error,
@@ -123,7 +121,7 @@ class LogItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     SelectableText(
-                      log.stackTrace!,
+                      log.stackTrace.toString(),
                       style: GoogleFonts.firaCode(
                         fontSize: 11,
                         color: colorScheme.onSurfaceVariant,

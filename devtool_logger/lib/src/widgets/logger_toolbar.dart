@@ -24,55 +24,71 @@ class LoggerToolbar extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: Row(
         children: [
-          SearchBar(
-            hintText: 'Search logs...',
-            leading: const Icon(Icons.search),
-            elevation: WidgetStateProperty.all(0),
-            backgroundColor: WidgetStateProperty.all(
-              colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            ),
-            padding: const WidgetStatePropertyAll<EdgeInsets>(
-              EdgeInsets.symmetric(horizontal: 12.0),
-            ),
-            onChanged: onSearchChanged,
-            trailing: [
-              IconButton(
-                icon: const Icon(Icons.delete_outline),
-                onPressed: onClearLogs,
-                tooltip: 'Clear Logs',
+          Expanded(
+            child: SearchBar(
+              hintText: 'Search logs...',
+              leading: const Icon(Icons.search, size: 20),
+              elevation: WidgetStateProperty.all(0),
+              backgroundColor: WidgetStateProperty.all(
+                colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          DropdownMenu<Level>(
-            initialSelection: selectedLevel,
-            label: const Text('Filter Level'),
-            dropdownMenuEntries: [
-              ...Level.values.map(
-                (l) => DropdownMenuEntry(
-                  value: l,
-                  label: l.name.toUpperCase(),
-                  leadingIcon: Icon(
-                    Icons.circle,
-                    size: 12,
-                    color: _getLevelColor(l),
-                  ),
+              padding: const WidgetStatePropertyAll<EdgeInsets>(
+                EdgeInsets.symmetric(horizontal: 12.0),
+              ),
+              onChanged: onSearchChanged,
+              controller: TextEditingController(text: searchQuery)
+                ..selection = TextSelection.fromPosition(
+                  TextPosition(offset: searchQuery.length),
                 ),
-              ),
-            ],
-            onSelected: (lvl) {
-              if (lvl != null) onLevelChanged(lvl);
-            },
-            expandedInsets: EdgeInsets.zero,
-            inputDecorationTheme: InputDecorationTheme(
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(28),
-                borderSide: BorderSide(color: colorScheme.outlineVariant),
+              trailing: [
+                if (searchQuery.isNotEmpty)
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20),
+                    onPressed: () => onSearchChanged(''),
+                    tooltip: 'Clear search',
+                  ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline, size: 20),
+                  onPressed: onClearLogs,
+                  tooltip: 'Clear Logs',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            width: 160,
+            child: DropdownMenu<Level>(
+              initialSelection: selectedLevel,
+              dropdownMenuEntries: Level.values
+                  .map(
+                    (l) => DropdownMenuEntry(
+                      value: l,
+                      label: l.name.toUpperCase(),
+                      leadingIcon: Icon(
+                        Icons.circle,
+                        size: 10,
+                        color: _getLevelColor(l),
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onSelected: (lvl) {
+                if (lvl != null) onLevelChanged(lvl);
+              },
+              inputDecorationTheme: InputDecorationTheme(
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                filled: true,
+                fillColor:
+                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),

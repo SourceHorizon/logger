@@ -8,6 +8,7 @@
 .pub/
 
 build/
+!extension/devtools/build/
 ios/
 android/
 demo/
