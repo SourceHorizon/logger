@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'filters/development_filter.dart';
 import 'log_event.dart';
 import 'log_filter.dart';
@@ -31,6 +33,8 @@ class Logger {
   static final Set<LogCallback> _logCallbacks = {};
 
   static final Set<OutputCallback> _outputCallbacks = {};
+
+  static const String extensionEventName = 'ext.devtool_logger.log';
 
   late final Future<void> _initialization;
   final LogFilter _filter;
@@ -183,6 +187,7 @@ class Logger {
     }
 
     if (_filter.shouldLog(logEvent)) {
+      developer.postEvent(extensionEventName, logEvent.toJson());
       var output = _printer.log(logEvent);
 
       if (output.isNotEmpty) {

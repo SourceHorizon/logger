@@ -10,7 +10,35 @@ on:
 
 # Publish using the reusable workflow from dart-lang.
 jobs:
+  build-extension:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+
+      - name: Build DevTools Extension
+        working-directory: devtool_logger
+        run: |
+          flutter pub get
+          dart run devtools_extensions build_and_copy --source=. --dest=../extension/devtools
+
+      - name: Commit build artifacts
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          # Force add build artifacts even if gitignored
+          git add -f extension/devtools/build
+          if git diff --staged --quiet; then
+            echo "No changes in build artifacts"
+          else
+            git commit -m "chore: update DevTools extension build artifacts [skip ci]"
+            git push origin HEAD:main
+          fi
+
   publish:
+    needs: build-extension
     permissions:
       id-token: write # Required for authentication using OIDC
     uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1

@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build DevTools Extension",
+      "type": "shell",
+      "command": "dart run devtools_extensions build_and_copy --source=. --dest=../extension/devtools",
+      "options": {
+        "cwd": "${workspaceFolder}/devtool_logger"
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
