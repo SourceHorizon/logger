@@ -1,4 +1,4 @@
-name: devtool_logger
+name: logger
 issueTracker: https://github.com/SourceHorizon/logger/issues
 version: 1.0.0
 materialIconCodePoint: "0xe1c0"

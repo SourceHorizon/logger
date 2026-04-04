@@ -10,6 +10,13 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug"
+    },
+    {
+      "name": "devtools_extension + simulated environment",
+      "cwd": "devtool_logger",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define=use_simulated_environment=true"]
     }
   ]
 }
