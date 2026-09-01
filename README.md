@@ -71,6 +71,7 @@ var logger = Logger(
   filter: null, // Use the default LogFilter (-> only log in debug mode)
   printer: PrettyPrinter(), // Use the PrettyPrinter to format and print log
   output: null, // Use the default LogOutput (-> send everything to console)
+  eventTransformer: null // Keep events unchanged (LogEvent)
 );
 ```
 
@@ -182,6 +183,30 @@ Other provided `LogOutput`s are:
 
 Possible future `LogOutput`s could send to Firebase or to Logcat. Feel free to open pull
 requests.
+
+## EventTransformer
+
+`eventTransformer` field in the `Logger()` constructor can be used to transform the event into a subclass of the original `LogEvent` event type
+
+This property by itself is not that useful. It shows its powers when you pair it with any extended custom implementation of:
+  - `LogFilter`
+  - `LogPrinter`
+  - `LogOutput`
+
+And pairing it with `message` object (your custom message object)
+
+```dart
+  void log(
+    Level level,
+    dynamic message, // pass whatever you want here
+  {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  })
+```
+
+Check out `example/custom_logger.dart` for a more advanced implementation of `logger`
 
 # Acknowledgments
 

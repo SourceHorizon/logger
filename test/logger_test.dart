@@ -69,6 +69,67 @@ class _AsyncPrinter extends LogPrinter {
   List<String> log(LogEvent event) => [event.message.toString()];
 }
 
+class _ExtendedLogEvent extends LogEvent {
+  final String customField;
+  final bool shouldDoField;
+
+  _ExtendedLogEvent(
+    super.level,
+    super.message, {
+    super.error,
+    super.stackTrace,
+    super.time,
+    required this.customField,
+    required this.shouldDoField,
+  });
+
+  factory _ExtendedLogEvent.fromLogEvent({
+    required LogEvent event,
+    required String customField,
+    required bool shouldDoField,
+  }) {
+    return _ExtendedLogEvent(
+      event.level,
+      event.message,
+      error: event.error,
+      stackTrace: event.stackTrace,
+      time: event.time,
+      customField: customField,
+      shouldDoField: shouldDoField,
+    );
+  }
+}
+
+class _ExtendedPrinter extends LogPrinter {
+  String? lastLoggedCustomField;
+  bool? lastLoggedShouldDoField;
+
+  @override
+  List<String> log(LogEvent event) {
+    final _ExtendedLogEvent e = event as _ExtendedLogEvent;
+    lastLoggedCustomField = e.customField;
+    lastLoggedShouldDoField = e.shouldDoField;
+    return [
+      if (e.shouldDoField) e.shouldDoField.toString(),
+      e.customField.toString(),
+      e.message.toString()
+    ];
+  }
+}
+
+class _ExtendedOutput extends LogOutput {
+  _ExtendedLogEvent? lastEventOrigin;
+  int? lastLinesCount;
+
+  @override
+  void output(OutputEvent event) {
+    final _ExtendedLogEvent e = event.origin as _ExtendedLogEvent;
+    lastLinesCount = event.lines.length;
+    lastEventOrigin = e;
+    // No-op
+  }
+}
+
 class _AsyncOutput extends LogOutput {
   final Duration delay;
   bool initialized = false;
@@ -180,6 +241,41 @@ void main() {
     expect(printedError, null);
     expect(printedStackTrace, null);
   });
+
+  test(
+    'Logger.eventTransformer',
+    () {
+      const customField = "customField";
+
+      bool shouldDoField = true;
+      final extendedPrinter = _ExtendedPrinter();
+      final extendedOutput = _ExtendedOutput();
+      final logger = Logger(
+        printer: extendedPrinter,
+        output: extendedOutput,
+        eventTransformer: (event) {
+          final shouldDo = shouldDoField;
+          shouldDoField = !shouldDoField;
+          return _ExtendedLogEvent.fromLogEvent(
+            event: event,
+            customField: customField,
+            shouldDoField: shouldDo,
+          );
+        },
+      );
+      logger.log(Level.info, "message");
+      expect(extendedPrinter.lastLoggedCustomField, customField);
+      expect(extendedPrinter.lastLoggedShouldDoField, !shouldDoField);
+      expect(extendedOutput.lastEventOrigin, isNotNull);
+      expect(extendedOutput.lastLinesCount, !shouldDoField ? 3 : 2);
+
+      logger.log(Level.info, "message");
+      expect(extendedPrinter.lastLoggedCustomField, customField);
+      expect(extendedPrinter.lastLoggedShouldDoField, !shouldDoField);
+      expect(extendedOutput.lastEventOrigin, isNotNull);
+      expect(extendedOutput.lastLinesCount, !shouldDoField ? 3 : 2);
+    },
+  );
 
   test('Logger.t', () {
     var logger = Logger(filter: _AlwaysFilter(), printer: callbackPrinter);

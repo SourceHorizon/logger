@@ -12,6 +12,9 @@ typedef LogCallback = void Function(LogEvent event);
 
 typedef OutputCallback = void Function(OutputEvent event);
 
+typedef EventTransformerCallback<E extends LogEvent> = E Function(
+    LogEvent event);
+
 /// Use instances of logger to send log messages to the [LogPrinter].
 class Logger {
   /// The current logging level of the app.
@@ -36,6 +39,7 @@ class Logger {
   final LogFilter _filter;
   final LogPrinter _printer;
   final LogOutput _output;
+  final EventTransformerCallback? _eventTransformer;
   bool _active = true;
 
   /// Create a new instance of Logger.
@@ -48,9 +52,11 @@ class Logger {
     LogPrinter? printer,
     LogOutput? output,
     Level? level,
+    EventTransformerCallback? eventTransformer,
   })  : _filter = filter ?? defaultFilter(),
         _printer = printer ?? defaultPrinter(),
-        _output = output ?? defaultOutput() {
+        _output = output ?? defaultOutput(),
+        _eventTransformer = eventTransformer {
     var filterInit = _filter.init();
     if (level != null) {
       _filter.level = level;
@@ -171,13 +177,18 @@ class Logger {
       throw ArgumentError('Log events cannot have Level.off');
     }
 
-    var logEvent = LogEvent(
+    LogEvent logEvent = LogEvent(
       level,
       message,
       time: time,
       error: error,
       stackTrace: stackTrace,
     );
+
+    if (_eventTransformer != null) {
+      logEvent = _eventTransformer!.call(logEvent);
+    }
+
     for (var callback in _logCallbacks) {
       callback(logEvent);
     }
