@@ -180,6 +180,26 @@ Other provided `LogOutput`s are:
 * `FileOutput`/`AdvancedFileOutput`
 * `StreamOutput`
 
+### File output
+
+`FileOutput` writes logs to a file. Include today's date in the file name
+(`log-2024-02-01.log`, `log-2024-02-02.log`, ...):
+
+```dart
+import 'dart:io';
+
+final logger = Logger(
+  printer: PrettyPrinter(colors: false),
+  output: FileOutput(
+    file: File('log-${DateTimeFormat.onlyDate(DateTime.now())}.log'),
+  ),
+);
+```
+
+The path is fixed when the `Logger` is created, so a process that stays up past
+midnight keeps writing to the same file. For size-based rotation and buffered
+writes, use `AdvancedFileOutput`. File output is not available on web.
+
 Possible future `LogOutput`s could send to Firebase or to Logcat. Feel free to open pull
 requests.
 
