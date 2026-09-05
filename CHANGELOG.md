@@ -1,7 +1,12 @@
+## 2.8.0
+
+* Expose separate `logEvent` method. Closes
+  ([#116](https://github.com/SourceHorizon/logger/issues/116)).
+
 ## 2.7.0
 
-* Use `clock` for getting default log event time. Thanks to
-  @alverone ([#112](https://github.com/SourceHorizon/logger/pull/112)).
+* Use `clock` for getting default log event time. Thanks to @alverone
+  ([#112](https://github.com/SourceHorizon/logger/pull/112)).
 
 ## 2.6.2
 
@@ -16,39 +21,39 @@
 
 ## 2.6.0
 
-* Added log level comparison operators. Thanks to
-  @busslina ([#90](https://github.com/SourceHorizon/logger/pull/90)).
+* Added log level comparison operators. Thanks to @busslina
+  ([#90](https://github.com/SourceHorizon/logger/pull/90)).
 * AdvancedFileOutput: Added `fileHeader` and `fileFooter` options.
   Closes [#97](https://github.com/SourceHorizon/logger/issues/97).
 
 ## 2.5.0
 
-* AdvancedFileOutput: Added support for custom `fileUpdateDuration`. Thanks to
-  @shlowdy ([#86](https://github.com/SourceHorizon/logger/pull/86)).
+* AdvancedFileOutput: Added support for custom `fileUpdateDuration`. Thanks to @shlowdy
+  ([#86](https://github.com/SourceHorizon/logger/pull/86)).
 * README: Fixed outdated LogOutput documentation.
 
 ## 2.4.0
 
-* Added pub.dev `topics`. Thanks to
-  @jonasfj ([#74](https://github.com/SourceHorizon/logger/pull/74)).
+* Added pub.dev `topics`. Thanks to @jonasfj
+  ([#74](https://github.com/SourceHorizon/logger/pull/74)).
 * PrettyPrinter: Added `dateTimeFormat` option (backwards-compatible with `printTime`).
   Fixes [#80](https://github.com/SourceHorizon/logger/issues/80).
 
 ## 2.3.0
 
-* AdvancedFileOutput: Added file deletion option. Thanks to
-  @lomby92 ([#71](https://github.com/SourceHorizon/logger/pull/71)).
+* AdvancedFileOutput: Added file deletion option. Thanks to @lomby92
+  ([#71](https://github.com/SourceHorizon/logger/pull/71)).
 
 ## 2.2.0
 
-* Added AdvancedFileOutput. Thanks to
-  @pyciko ([#65](https://github.com/SourceHorizon/logger/pull/65)).
+* Added AdvancedFileOutput. Thanks to @pyciko
+  ([#65](https://github.com/SourceHorizon/logger/pull/65)).
 * Added missing acknowledgments in README.
 
 ## 2.1.0
 
-* Improved README explanation about debug mode. Thanks to
-  @gkuga ([#57](https://github.com/SourceHorizon/logger/pull/57)).
+* Improved README explanation about debug mode. Thanks to @gkuga
+  ([#57](https://github.com/SourceHorizon/logger/pull/57)).
 * Added web safe export. Fixes [#58](https://github.com/SourceHorizon/logger/issues/58).
 * Added `logger.init` to optionally await any `async` `init()` methods.
   Fixes [#61](https://github.com/SourceHorizon/logger/issues/61).
@@ -69,13 +74,12 @@
 ## 2.0.0
 
 * Fixed supported platforms list.
-* Removed reference to outdated `logger_flutter` project.
-  Thanks to @yangsfang ([#32](https://github.com/SourceHorizon/logger/pull/32)).
-* Added override capability for logger defaults.
-  Thanks to @yangsfang ([#34](https://github.com/SourceHorizon/logger/pull/34)).
-* `Level.verbose`, `Level.wtf` and `Level.nothing` have been deprecated and are replaced
-  by `Level.trace`, `Level.fatal` and `Level.off`.
-  Additionally `Level.all` has been added.
+* Removed reference to outdated `logger_flutter` project. Thanks to @yangsfang
+  ([#32](https://github.com/SourceHorizon/logger/pull/32)).
+* Added override capability for logger defaults. Thanks to @yangsfang
+  ([#34](https://github.com/SourceHorizon/logger/pull/34)).
+* `Level.verbose`, `Level.wtf` and `Level.nothing` have been deprecated and are replaced by
+  `Level.trace`, `Level.fatal` and `Level.off`. Additionally `Level.all` has been added.
 * PrettyPrinter: Added `levelColors` and `levelEmojis` as constructor parameter.
 
 ### Breaking changes
@@ -95,12 +99,12 @@
       ```dart
       logger.e("An error occurred!", error: error, stackTrace: stackTrace);
       ```
-* `init` and `close` methods of `LogFilter`, `LogOutput` and `LogPrinter` are now async along
-  with `Logger.close()`. (Fixes FileOutput)
+* `init` and `close` methods of `LogFilter`, `LogOutput` and `LogPrinter` are now async along with
+  `Logger.close()`. (Fixes FileOutput)
 * LogListeners are now called on every LogEvent independent of the filter.
 * PrettyPrinter: `includeBox` is now private.
-* PrettyPrinter: `errorMethodCount` is now only considered if an error has been provided.
-  Otherwise `methodCount` is used.
+* PrettyPrinter: `errorMethodCount` is now only considered if an error has been provided. Otherwise
+  `methodCount` is used.
 * PrettyPrinter: Static `levelColors` and `levelEmojis` have been renamed to `defaultLevelColors`
   and `defaultLevelEmojis` and are used as fallback for their respective constructor parameters.
 * Levels are now sorted by their respective value instead of the enum index (Order didn't change).
@@ -108,8 +112,8 @@
 ## 1.4.0
 
 * Bumped upper SDK constraint to `<4.0.0`.
-* Added `excludePaths` to PrettyPrinter. Thanks to
-  @Stitch-Taotao ([#13](https://github.com/SourceHorizon/logger/pull/13)).
+* Added `excludePaths` to PrettyPrinter. Thanks to @Stitch-Taotao
+  ([#13](https://github.com/SourceHorizon/logger/pull/13)).
 * Removed background color for `Level.error` and `Level.wtf` to improve readability.
 * Improved PrettyPrinter documentation.
 * Corrected README notice about ANSI colors.
